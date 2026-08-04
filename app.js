@@ -19,7 +19,7 @@
 })();
 
 'use strict';
-const APP_VERSION="V43.0";
+const APP_VERSION="V43.1";
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}

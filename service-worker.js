@@ -1,5 +1,5 @@
-const VERSION = "V43.0.3";
-const CACHE_NAME = "planning-dojo-club-v43-3";
+const VERSION = "V43.0.1";
+const CACHE_NAME = "planning-dojo-club-v43-1";
 const APP_SHELL = [
   "./",
   "./index.html",
