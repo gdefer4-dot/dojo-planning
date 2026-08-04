@@ -1,15 +1,15 @@
-const CACHE_NAME = "planning-dojo-club-v41-1";
+const CACHE_NAME = "planning-dojo-club-v42-1";
 const APP_SHELL = [
   "./",
-  "./index.html?v=411",
-  "./app.css?v=411",
-  "./app.js?v=411",
-  "./mobile-data.js?v=411",
-  "./manifest.webmanifest?v=411",
-  "./apple-touch-icon.png?v=411",
-  "./icon-192.png?v=411",
-  "./icon-512.png?v=411",
-  "./icon-maskable-512.png?v=411"
+  "./index.html?v=420",
+  "./app.css?v=420",
+  "./app.js?v=420",
+  "./mobile-data.js?v=4201",
+  "./manifest.webmanifest?v=420",
+  "./apple-touch-icon.png?v=420",
+  "./icon-192.png?v=420",
+  "./icon-512.png?v=420",
+  "./icon-maskable-512.png?v=420"
 ];
 
 self.addEventListener("install", event => {
@@ -36,10 +36,10 @@ self.addEventListener("fetch", event => {
       fetch(event.request, { cache: "no-store" })
         .then(response => {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put("./index.html?v=411", copy));
+          caches.open(CACHE_NAME).then(cache => cache.put("./index.html?v=420", copy));
           return response;
         })
-        .catch(() => caches.match("./index.html?v=411"))
+        .catch(() => caches.match("./index.html?v=420"))
     );
     return;
   }
