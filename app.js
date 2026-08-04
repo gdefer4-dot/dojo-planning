@@ -81,7 +81,7 @@ window.addEventListener("load", () => {
   }
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js?v=4420")
+    navigator.serviceWorker.register("./service-worker.js?v=40")
       .then(registration => registration.update())
       .catch(error => console.warn("Service worker non enregistré :", error));
   }
