@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planning Dojo - V33.13</title>
+  <link rel="stylesheet" href="planning-affiche.css?v=33.2">
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>📅 Planning</h1>
+      <h2 id="sidebar-planning-title">Fitness &amp; Bien-être</h2>
+
+      <div class="planning-switcher" role="group" aria-label="Choix du planning">
+        <button id="switch-fitness" class="planning-switch active" type="button">🏋️ FITNESS</button>
+        <button id="switch-martial" class="planning-switch" type="button">🥋 ARTS MARTIAUX</button>
+      </div>
+
+      <button id="btn-add" class="btn add">＋ Ajouter un cours</button>
+      <button id="btn-settings" class="btn settings">⚙️ Paramètres</button>
+      <button id="btn-print" class="btn print">🖨 Imprimer l'affiche</button>
+      <button id="btn-course-details" class="btn settings" type="button">📖 Fiches des cours</button>
+      <button id="btn-export-web" class="btn print" type="button">🌐 Exporter la page QR</button>
+
+      <section id="settings-panel" class="settings-panel">
+        <h3>⚙️ Paramètres du visuel</h3>
+
+        <label>Photo gauche / bien-être</label>
+        <input id="input-photo-left" type="file" accept="image/*">
+
+        <label>Photo droite / fitness</label>
+        <input id="input-photo-right" type="file" accept="image/*">
+
+        <label>Logo du club</label>
+        <input id="input-logo" type="file" accept="image/*">
+
+        <label>Fond bambou</label>
+        <input id="input-bamboo" type="file" accept="image/*">
+
+        <button id="btn-reset-images" class="btn reset">↩️ Réinitialiser les images</button>
+
+        <p class="settings-help">
+          Les images sont enregistrées dans ce navigateur. Tes cours restent enregistrés.
+        </p>
+      </section>
+
+      <div id="course-list"></div>
+    </aside>
+
+    <main class="preview">
+      <section id="screen-workspace" class="screen-workspace" aria-label="Vue de travail du planning"></section>
+      <section class="poster">
+        
+<header class="hero hero-v21 hero-v24">
+  <div class="hero-speed-lines" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="hero-logo-zone">
+    <div class="logo-disc">
+      <img id="club-logo" class="logo-v21" src="./logo-dojo.jpg" alt="Logo Dojo">
+    </div>
+  </div>
+
+  <div class="hero-title-v21">
+    <div class="title-accent" aria-hidden="true"></div>
+    <div class="title-stack">
+      <h1 id="hero-main-title">FITNESS</h1>
+      <h2 id="hero-sub-title">&amp; BIEN-ÊTRE</h2>
+      <div class="hero-title-bottom">
+        <div class="title-energy-line" aria-hidden="true">
+          <span class="energy-red"></span>
+          <span class="energy-blue"></span>
+          <span class="energy-arrow"></span>
+        </div>
+        <div class="season-badge">SAISON 2026-2027</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-dots" aria-hidden="true"></div>
+  <div class="hero-corner-bars" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+
+        <section id="planning-grid" class="planning-grid"></section>
+
+        <section class="footer-grid">
+          <div class="info-row footer-panel-group">
+            <div class="legend-box legend-lieux footer-card">
+              <h3>📍 LIEUX DE PRATIQUE</h3>
+              <p class="legend-item place-item"><span class="legend-ico">🥋</span> Grand Dojo</p>
+              <p class="legend-item place-item"><span class="legend-ico">⛩️</span> Petit Dojo</p>
+              <p class="legend-item place-item"><span class="legend-ico">🏢</span> Salle Kerkhove</p>
+            </div>
+
+            <div id="legend-colors-card" class="legend-box legend-couleurs footer-card">
+              <h3>🎨 CODE COULEUR</h3>
+              <div id="color-legend-grid" class="color-legend-grid">
+              <p class="legend-item color-item"><span class="dot blue"></span> Bien-être</p>
+              <p class="legend-item color-item"><span class="dot green"></span> Santé / Douceur</p>
+              <p class="legend-item color-item color-item-renforcement"><span class="dot orange"></span><span class="legend-text"><span class="legend-line">Renfo</span><span class="legend-line">musculaire</span></span></p>
+              <p class="legend-item color-item"><span class="dot red"></span> Cardio musculaire</p>
+              <p class="legend-item color-item"><span class="dot purple"></span> Tonicité</p>
+              <p class="legend-item color-item"><span class="dot yellow"></span> Postural</p>
+            
+              </div>
+            </div>
+
+            <div id="legend-intensity-card" class="legend-box legend-intensite footer-card">
+              <h3>🔥 INTENSITÉ</h3>
+              <p class="legend-item intensity-item"><span class="intensity-dots">●○○○</span> Facile</p>
+              <p class="legend-item intensity-item"><span class="intensity-dots">●●○○</span> Modérée</p>
+              <p class="legend-item intensity-item"><span class="intensity-dots">●●●○</span> Soutenue</p>
+              <p class="legend-item intensity-item"><span class="intensity-dots">●●●●</span> Intense</p>
+            </div>
+          </div>
+
+          <section class="muscu-hours footer-card">
+            <div class="section-title"><span>🏋️ HORAIRES DE LA SALLE DE MUSCULATION</span></div>
+            <div class="muscu-grid muscu-grid-v25 muscu-grid-v27-5"></div>
+          </section>
+
+          <section class="qr-section footer-card">
+            <div class="section-title"><span>👥 RETROUVEZ-NOUS</span></div>
+            <div class="qr-grid">
+              <div class="qr-card facebook">
+                <h3>FACEBOOK</h3>
+                <img src="./qr-facebook.svg" alt="QR Code Facebook">
+                <p>Actualités du club</p>
+              </div>
+              <div class="qr-card instagram">
+                <h3>INSTAGRAM</h3>
+                <img src="./qr-instagram.svg" alt="QR Code Instagram">
+                <p>Photos • Stories • Reels</p>
+              </div>
+              <div class="qr-card planning">
+                <h3>PLANNING</h3>
+                <img src="./qr-planning.svg" alt="QR Code Planning">
+                <p>Le planning dans votre téléphone</p>
+              </div>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="course-details-modal" class="details-editor-overlay" hidden>
+    <section class="details-editor" role="dialog" aria-modal="true" aria-labelledby="details-editor-title">
+      <div class="details-editor-head">
+        <div><h2 id="details-editor-title">📖 Fiches des cours</h2><p>Les descriptions du flyer sont déjà intégrées. Tu peux ajouter le coach ou personnaliser le texte.</p></div>
+        <button id="btn-close-details" type="button" aria-label="Fermer">✕</button>
+      </div>
+      <label for="details-course-select">Cours</label>
+      <select id="details-course-select"></select>
+      <label for="details-coach">Nom du coach</label>
+      <input id="details-coach" type="text" placeholder="Ex. Guillaume">
+      <label for="details-description">Description du cours</label>
+      <textarea id="details-description" rows="7" placeholder="Décris simplement le contenu et les objectifs du cours."></textarea>
+      <div class="details-editor-actions">
+        <button id="btn-save-details" class="btn add" type="button">💾 Enregistrer la fiche</button>
+        <button id="btn-close-details-bottom" class="btn reset" type="button">Fermer</button>
+      </div>
+      <p id="details-save-status" class="details-save-status" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <script src="planning-data.js?v=31.0"></script>
+  <script src="planning-affiche.js?v=31.0"></script>
+</body>
+</html>

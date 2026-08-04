@@ -1,0 +1,42 @@
+DOJO PLANNING COMPLET V40.1
+================================
+
+CE DOSSIER CONTIENT LES DEUX PARTIES :
+
+1. PLANNING PC
+- planning-affiche.html
+- planning-affiche.css
+- planning-affiche.js
+- planning-data.js
+- tous les fichiers associés
+
+2. APPLICATION MOBILE PWA
+- tout le dossier mobile/
+
+IMPORTANT
+---------
+Remplacez le contenu du dépôt GitHub par TOUS les fichiers et dossiers
+présents dans cette archive.
+
+Ne déplacez pas les fichiers du dossier mobile à la racine.
+Le dossier mobile évite les conflits avec le planning PC.
+
+UTILISATION
+-----------
+Planning PC :
+ouvrir planning-affiche.html
+
+Application mobile :
+https://gdefer4-dot.github.io/dojo-planning/
+ou directement :
+https://gdefer4-dot.github.io/dojo-planning/mobile/?v=401
+
+La version affichée sur mobile doit être V40.1 PWA.
+
+ANCIEN CACHE
+------------
+Après la mise en ligne :
+1. Attendre le déploiement GitHub Pages.
+2. Ouvrir l'adresse mobile avec ?v=401.
+3. Supprimer l'ancien raccourci iPhone avec le P.
+4. Réinstaller l'application depuis Safari.

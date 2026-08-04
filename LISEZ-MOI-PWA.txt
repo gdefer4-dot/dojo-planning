@@ -1,0 +1,18 @@
+PLANNING DOJO CLUB V34.1 PWA
+
+Mise en ligne GitHub :
+1. Remplacer tous les anciens fichiers PWA par ceux de cette archive.
+2. Conserver tous les fichiers à la racine du dépôt.
+3. Attendre le déploiement GitHub Pages.
+4. Ouvrir une première fois : https://gdefer4-dot.github.io/dojo-planning/?v=341
+
+Installation :
+- Android : toucher « Installer l’application ».
+- iPhone : toucher « Installer l’application », puis suivre le guide Safari.
+- Dans Messenger/Facebook : ouvrir d’abord la page dans Safari ou Chrome.
+
+Important pour l’ancienne icône « P » :
+- Supprimer l’ancien raccourci de l’écran d’accueil.
+- Ouvrir la nouvelle version dans Safari.
+- Réinstaller avec « Sur l’écran d’accueil ».
+L’icône affichera alors le logo du Dojo et le nom « Planning Dojo Club ».

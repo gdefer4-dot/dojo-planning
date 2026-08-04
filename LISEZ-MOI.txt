@@ -1,0 +1,10 @@
+DOJO PLANNING V31 - DESCRIPTIONS DU FLYER
+
+1. Ouvrir planning-affiche.html.
+2. Les descriptions du flyer sont déjà intégrées dans Fiches des cours.
+3. Ajouter les coachs si nécessaire puis enregistrer.
+4. Cliquer sur Exporter la page QR.
+5. Déposer le fichier index.html généré à la racine du dépôt GitHub Pages.
+
+Aucun bouton d'inscription n'a été ajouté.
+Le visuel d'impression n'a pas été modifié.

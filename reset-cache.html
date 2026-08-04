@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mise à jour Planning Dojo</title>
+<body style="font-family:Arial;padding:24px;text-align:center">
+<h2>Mise à jour du Planning Dojo</h2><p>Nettoyage de l’ancienne version…</p>
+<script>
+(async()=>{
+ try{
+  if('serviceWorker' in navigator){
+   const regs=await navigator.serviceWorker.getRegistrations();
+   await Promise.all(regs.map(r=>r.unregister()));
+  }
+  if('caches' in window){
+   const keys=await caches.keys();
+   await Promise.all(keys.map(k=>caches.delete(k)));
+  }
+ }finally{
+  location.replace('./?v=411');
+ }
+})();
+</script>
+</body></html>

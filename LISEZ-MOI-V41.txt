@@ -1,0 +1,24 @@
+PLANNING DOJO CLUB V41.0
+
+UN SEUL DOSSIER OFFICIEL : FRONTEND
+
+- index.html : application mobile installable (GitHub Pages)
+- planning-affiche.html : planning PC / édition
+- planning-affiche.css et planning-affiche.js : interface PC
+- planning-data.js : données par défaut du planning PC (35 fitness + 20 arts martiaux)
+- mobile-data.js : données complètes affichées sur mobile
+- app.css et app.js : application mobile
+- manifest.webmanifest et service-worker.js : installation PWA
+
+ADRESSES
+Planning mobile : https://gdefer4-dot.github.io/dojo-planning/?v=410
+Planning PC : https://gdefer4-dot.github.io/dojo-planning/planning-affiche.html
+
+INSTALLATION
+1. Remplacer le contenu du dépôt GitHub par tous les fichiers de ce dossier.
+2. Attendre le déploiement.
+3. Ouvrir l'adresse mobile avec ?v=410.
+4. Sur iPhone : bouton Installer, puis Partager > Sur l’écran d’accueil.
+
+LOCAL
+Ouvrir le dossier FRONTEND dans VS Code puis lancer planning-affiche.html avec Live Server.
