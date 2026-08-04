@@ -1,5 +1,13 @@
 [
   {
+    "build": 4,
+    "version": "V44.3.4",
+    "date": "2026-08-04T20:04:41.355Z",
+    "fitness": 37,
+    "martial": 0,
+    "message": "Mise à jour automatique du planning mobile"
+  },
+  {
     "build": 3,
     "version": "V44.2.3",
     "date": "2026-08-04T19:53:02.714Z",

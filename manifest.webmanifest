@@ -1,10 +1,10 @@
 {
-  "id": "./?app=v411",
+  "id": "./?app=v420",
   "name": "Planning Dojo Club",
   "short_name": "Planning Dojo",
   "description": "Planning officiel du Dojo Club de Vieux-Condé.",
   "lang": "fr-FR",
-  "start_url": "./?app=v411",
+  "start_url": "./?app=v420",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
