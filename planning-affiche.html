@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planning Dojo - V33.13</title>
-  <link rel="stylesheet" href="planning-affiche.css?v=33.2">
+  <title>Planning Dojo - V30.1</title>
+  <link rel="stylesheet" href="planning-affiche.css?v=30.0">
 </head>
 
 <body>
@@ -23,6 +23,11 @@
       <button id="btn-print" class="btn print">🖨 Imprimer l'affiche</button>
       <button id="btn-course-details" class="btn settings" type="button">📖 Fiches des cours</button>
       <button id="btn-export-web" class="btn print" type="button">🌐 Exporter la page QR</button>
+      <button id="btn-publish" class="btn publish" type="button">🚀 Publier sur le mobile</button>
+      <div id="publish-status" class="publish-status" hidden>
+        <div class="publish-status-title">Publication</div>
+        <div id="publish-status-text">Prêt.</div>
+      </div>
 
       <section id="settings-panel" class="settings-panel">
         <h3>⚙️ Paramètres du visuel</h3>
@@ -38,6 +43,12 @@
 
         <label>Fond bambou</label>
         <input id="input-bamboo" type="file" accept="image/*">
+
+
+        <label class="settings-checkbox">
+          <input id="input-print-coaches" type="checkbox">
+          <span>Afficher les intervenants sur l'impression</span>
+        </label>
 
         <button id="btn-reset-images" class="btn reset">↩️ Réinitialiser les images</button>
 
@@ -122,7 +133,54 @@
 
           <section class="muscu-hours footer-card">
             <div class="section-title"><span>🏋️ HORAIRES DE LA SALLE DE MUSCULATION</span></div>
-            <div class="muscu-grid muscu-grid-v25 muscu-grid-v27-5"></div>
+            <div class="muscu-grid muscu-grid-v25 muscu-grid-v27-5">
+              <div class="muscu-day">
+                <h4>LUNDI</h4>
+                <div class="time-slot">
+                  <span class="word">DE</span><strong>13h45</strong>
+                  <span class="word">À</span><strong>20h45</strong>
+                </div>
+              </div>
+
+              <div class="muscu-day muscu-days-grouped">
+                <h4>MARDI AU VENDREDI</h4>
+                <div class="time-slot">
+                  <div class="time-slot">
+                    <span class="word">DE</span><strong>08h45</strong>
+                    <span class="word">À</span><strong>12h00</strong>
+                  </div>
+                  <span class="and-word">ET</span>
+                  <div class="time-slot">
+                    <span class="word">DE</span><strong>13h45</strong>
+                    <span class="word">À</span><strong>20h45</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="muscu-day">
+                <h4>SAMEDI</h4>
+                <div class="time-slot">
+                  <div class="time-slot">
+                    <span class="word">DE</span><strong>08h45</strong>
+                    <span class="word">À</span><strong>12h00</strong>
+                  </div>
+                  <span class="and-word">ET</span>
+                  <div class="time-slot">
+                    <span class="word">DE</span><strong>13h45</strong>
+                    <span class="word">À</span><strong>16h30</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="muscu-day">
+                <h4>DIMANCHE</h4>
+                <div class="time-slot">
+                  <span class="word">DE</span><strong>08h45</strong>
+                  <span class="word">À</span><strong>12h00</strong>
+                </div>
+              </div>
+            </div>
+            <div class="muscu-note">🕘 </div>
           </section>
 
           <section class="qr-section footer-card">
@@ -153,13 +211,12 @@
   <div id="course-details-modal" class="details-editor-overlay" hidden>
     <section class="details-editor" role="dialog" aria-modal="true" aria-labelledby="details-editor-title">
       <div class="details-editor-head">
-        <div><h2 id="details-editor-title">📖 Fiches des cours</h2><p>Les descriptions du flyer sont déjà intégrées. Tu peux ajouter le coach ou personnaliser le texte.</p></div>
+        <div><h2 id="details-editor-title">📖 Fiches des cours</h2><p>Renseigne le coach et la description affichés sur mobile.</p></div>
         <button id="btn-close-details" type="button" aria-label="Fermer">✕</button>
       </div>
       <label for="details-course-select">Cours</label>
       <select id="details-course-select"></select>
-      <label for="details-coach">Nom du coach</label>
-      <input id="details-coach" type="text" placeholder="Ex. Guillaume">
+      <p class="details-coach-help">Les intervenants se choisissent directement dans chaque créneau du planning.</p>
       <label for="details-description">Description du cours</label>
       <textarea id="details-description" rows="7" placeholder="Décris simplement le contenu et les objectifs du cours."></textarea>
       <div class="details-editor-actions">
@@ -170,7 +227,7 @@
     </section>
   </div>
 
-  <script src="planning-data.js?v=31.0"></script>
-  <script src="planning-affiche.js?v=31.0"></script>
+  <script src="planning-data.js?v=28.18"></script>
+  <script src="planning-affiche.js?v=30.1"></script>
 </body>
 </html>

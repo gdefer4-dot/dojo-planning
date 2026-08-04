@@ -1,5 +1,10 @@
-const VERSION = "V45.1.7";
-const CACHE_NAME = "planning-dojo-club-v45-1-7";
+<<<<<<< Updated upstream
+const VERSION = "V45.2.8";
+const CACHE_NAME = "planning-dojo-club-v45-2-8";
+=======
+const VERSION = "V45.2.0";
+const CACHE_NAME = "planning-dojo-club-v45-2-0";
+>>>>>>> Stashed changes
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -38,37 +43,44 @@ self.addEventListener("message", event => {
   if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 
+
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
+
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  if (
+  const mutable = (
     event.request.mode === "navigate" ||
-    url.pathname.endsWith("/version.json") ||
+    url.pathname.endsWith("/index.html") ||
     url.pathname.endsWith("/mobile-data.js") ||
     url.pathname.endsWith("/app.js") ||
+    url.pathname.endsWith("/app.css") ||
+    url.pathname.endsWith("/version.json") ||
     url.pathname.endsWith("/service-worker.js")
-  ) {
+  );
+
+  if (mutable) {
     event.respondWith(
       fetch(event.request, { cache: "no-store" })
         .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+          const copie = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copie));
           return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(() => caches.match(event.request).then(cached => cached || caches.match("./index.html")))
     );
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then(cached =>
-      cached || fetch(event.request).then(response => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+      return fetch(event.request).then(response => {
+        const copie = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copie));
         return response;
-      })
-    )
+      });
+    })
   );
 });

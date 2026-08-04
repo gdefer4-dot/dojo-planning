@@ -1,5 +1,9 @@
 'use strict';
+<<<<<<< Updated upstream
 const APP_VERSION='V45.1';
+=======
+const APP_VERSION='V45.2';
+>>>>>>> Stashed changes
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
@@ -81,8 +85,31 @@ window.addEventListener("load", () => {
   }
 
   if ("serviceWorker" in navigator) {
+<<<<<<< Updated upstream
     navigator.serviceWorker.register("./service-worker.js?v=4510")
       .then(registration => registration.update())
+=======
+    navigator.serviceWorker.register("./service-worker.js?v=4520")
+      .then(async registration => {
+        await registration.update();
+        registration.addEventListener("updatefound", () => {
+          const nouveau = registration.installing;
+          if (!nouveau) return;
+          nouveau.addEventListener("statechange", () => {
+            if (nouveau.state === "installed" && navigator.serviceWorker.controller) {
+              nouveau.postMessage({ type: "SKIP_WAITING" });
+            }
+          });
+        });
+      })
+>>>>>>> Stashed changes
       .catch(error => console.warn("Service worker non enregistré :", error));
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!window.__dojoReloaded) {
+        window.__dojoReloaded = true;
+        location.reload();
+      }
+    });
   }
 });

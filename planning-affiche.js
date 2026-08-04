@@ -12,7 +12,40 @@ let settings = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
 let jourOuvert = "Lundi";
 let carteOuverte = null;
 
-normaliserHoraires();
+const INTERVENANTS = [
+  "Guillaume",
+  "Ludivine",
+  "Cassandra",
+  "Fabienne",
+  "Christophe",
+  "Benjamin",
+  "Amélie",
+  "Thomas"
+];
+
+function normaliserIntervenants(valeur) {
+  if (Array.isArray(valeur)) return valeur.filter(nom => INTERVENANTS.includes(nom));
+  if (typeof valeur === "string" && valeur.trim()) {
+    return valeur.split(",").map(nom => nom.trim()).filter(nom => INTERVENANTS.includes(nom));
+  }
+  return [];
+}
+
+function texteIntervenants(coursItem) {
+  return normaliserIntervenants(coursItem?.intervenants).join(" • ");
+}
+
+function modifierIntervenant(index, nom, coche) {
+  if (!cours[index]) return;
+  const liste = new Set(normaliserIntervenants(cours[index].intervenants));
+  if (coche) liste.add(nom);
+  else liste.delete(nom);
+  cours[index].intervenants = INTERVENANTS.filter(personne => liste.has(personne));
+  sauvegarder();
+  afficherTout();
+}
+
+
 
 function normaliserCoursPourPlanningActif() {
   const nomsActivites = new Set(ACTIVITES.map(a => a.nom));
@@ -20,7 +53,7 @@ function normaliserCoursPourPlanningActif() {
   let modifie = false;
 
   cours = cours.map(c => {
-    const copie = { ...c };
+    const copie = { ...c, intervenants: normaliserIntervenants(c.intervenants) };
 
     if (!nomsActivites.has(copie.activite)) {
       copie.activite = ACTIVITES[0].nom;
@@ -39,6 +72,38 @@ function normaliserCoursPourPlanningActif() {
   if (modifie) sauvegarder();
 }
 
+
+/* V45.0 : restauration ciblée du Circuit Training ADO.
+   Une seule migration, uniquement sur le créneau accidentellement remplacé. */
+(function restaurerCircuitTrainingAdo(){
+  const cleMigration = "dojo-migration-circuit-ado-v443";
+  if (localStorage.getItem(cleMigration)) return;
+
+  let modifie = false;
+  cours = cours.map(c => {
+    if (
+      planningActif === "fitness" &&
+      c.jour === "Mercredi" &&
+      c.debut === "14:30" &&
+      c.fin === "15:15" &&
+      c.activite === "Stretching"
+    ) {
+      modifie = true;
+      return {
+        ...c,
+        activite: "Circuit Training ADO 12-16 ans",
+        intensite: 3,
+        salle: "Petit Dojo",
+        intervenants: normaliserIntervenants(c.intervenants)
+      };
+    }
+    return c;
+  });
+
+  if (modifie) localStorage.setItem(STORAGE_KEY, JSON.stringify(cours));
+  localStorage.setItem(cleMigration, "1");
+})();
+
 function chargerPlanning(type) {
   planningActif = type;
   configActive = PLANNING_CONFIGS[type] || PLANNING_CONFIGS.fitness;
@@ -52,7 +117,6 @@ function chargerPlanning(type) {
   cours = JSON.parse(localStorage.getItem(STORAGE_KEY)) || structuredClone(PLANNING_DEFAUT);
   settings = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
   normaliserCoursPourPlanningActif();
-  normaliserHoraires();
   jourOuvert = "Lundi";
   carteOuverte = null;
 
@@ -78,53 +142,6 @@ const MARTIAL_COLOR_LEGEND_HTML = `
   <p class="legend-item color-item"><span class="dot martial-ppg"></span> PPG Arts Martiaux</p>
   <p class="legend-item color-item"><span class="dot martial-eveil"></span> Éveil</p>
 `;
-
-
-function formaterHoraireMuscuPourAffiche(horaire) {
-  const [debut, fin] = horaire.split(" à ");
-  return `<div class="time-slot"><span class="word">DE</span><strong>${debut}</strong><span class="word">À</span><strong>${fin}</strong></div>`;
-}
-
-function genererHorairesMusculationAffiche() {
-  const libelles = {
-    "Lundi": "LUNDI",
-    "Mardi et jeudi": "MARDI ET JEUDI",
-    "Mercredi et vendredi": "MERCREDI ET VENDREDI",
-    "Samedi": "SAMEDI",
-    "Dimanche": "DIMANCHE"
-  };
-
-  return HORAIRES_MUSCULATION.map(item => {
-    const horaires = item.horaires.map(horaire => {
-      const [debut, fin] = horaire.split(" à ");
-      return `<div class="muscu-period">
-        <span class="muscu-label">DE</span>
-        <strong>${debut}</strong>
-        <span class="muscu-label">À</span>
-        <strong>${fin}</strong>
-      </div>`;
-    }).join('<div class="muscu-divider"><span>ET</span></div>');
-
-    const typePlage = item.horaires.length > 1 ? "muscu-double" : "muscu-single";
-
-    return `<div class="muscu-day ${typePlage}">
-      <h4>${libelles[item.jour] || item.jour.toUpperCase()}</h4>
-      <div class="muscu-body">${horaires}</div>
-    </div>`;
-  }).join("");
-}
-
-function genererHorairesMusculationMobile() {
-  return HORAIRES_MUSCULATION.map(item => {
-    return `<div class="muscu-line"><div class="muscu-day">${item.jour}</div><div class="muscu-time">${item.horaires.join("<br>")}</div></div>`;
-  }).join("");
-}
-
-function mettreAJourHorairesMusculationAffiche() {
-  document.querySelectorAll(".muscu-grid-v27-5").forEach(grille => {
-    grille.innerHTML = genererHorairesMusculationAffiche();
-  });
-}
 
 function mettreAJourIdentitePlanning() {
   const isFitness = planningActif === "fitness";
@@ -187,29 +204,15 @@ function calculerDuree(debut, fin) {
   return (hf * 60 + mf) - (hd * 60 + md);
 }
 
-function ajouterMinutes(heure, minutes) {
-  const [h, m] = heure.split(":").map(Number);
-  const total = (h * 60 + m + minutes) % (24 * 60);
-  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
-}
-
-function normaliserHoraires() {
-  let modifie = false;
-  cours.forEach(c => {
-    if (calculerDuree(c.debut, c.fin) <= 0) {
-      const activite = getActivite(c.activite);
-      c.fin = ajouterMinutes(c.debut, activite.duree || 45);
-      modifie = true;
-    }
-  });
-  if (modifie) sauvegarder();
-}
-
 function appliquerSettings() {
   if (settings.photoLeft) document.getElementById("hero-left").src = settings.photoLeft;
   if (settings.photoRight) document.getElementById("hero-right").src = settings.photoRight;
   if (settings.logo) document.getElementById("club-logo").src = settings.logo;
   document.documentElement.style.setProperty("--bamboo-img", settings.bamboo ? `url("${settings.bamboo}")` : `url("bambou.png")`);
+  const poster = document.querySelector(".poster");
+  if (poster) poster.classList.toggle("show-print-coaches", Boolean(settings.showPrintCoaches));
+  const checkbox = document.getElementById("input-print-coaches");
+  if (checkbox) checkbox.checked = Boolean(settings.showPrintCoaches);
 }
 
 function lireImage(input, key) {
@@ -263,16 +266,10 @@ function ouvrirCarte(index) {
 }
 
 function modifierCours(index, champ, valeur) {
-  const coursModifie = cours[index];
-  if (!coursModifie) return;
-  coursModifie[champ] = valeur;
+  cours[index][champ] = valeur;
   if (champ === "jour") {
     jourOuvert = valeur;
     carteOuverte = index;
-  }
-  if ((champ === "debut" || champ === "fin") && calculerDuree(coursModifie.debut, coursModifie.fin) <= 0) {
-    const activite = getActivite(coursModifie.activite);
-    coursModifie.fin = ajouterMinutes(coursModifie.debut, activite.duree || 45);
   }
   sauvegarder();
   afficherTout();
@@ -326,7 +323,7 @@ function afficherListeCours() {
         <div class="course-summary" onclick="ouvrirCarte(${c.index})">
           <div>
             <strong>${c.debut} · ${c.activite}</strong><br>
-            <small>${salle.icone} ${salle.nom}</small>
+            <small>${salle.icone} ${salle.nom}${texteIntervenants(c) ? ` · 👤 ${texteIntervenants(c)}` : ""}</small>
           </div>
           <span>${carteOuverte === c.index ? "▲" : "▼"}</span>
         </div>
@@ -356,6 +353,18 @@ function afficherListeCours() {
           <select onchange="modifierCours(${c.index}, 'salle', this.value)">
             ${SALLES.map(s => `<option value="${s.nom}" ${c.salle === s.nom ? "selected" : ""}>${s.icone} ${s.nom}</option>`).join("")}
           </select>
+
+          <label>Intervenant(s)</label>
+          <div class="coach-multiselect">
+            ${INTERVENANTS.map(nom => `
+              <label class="coach-choice">
+                <input type="checkbox"
+                  ${normaliserIntervenants(c.intervenants).includes(nom) ? "checked" : ""}
+                  onchange="modifierIntervenant(${c.index}, '${nom}', this.checked)">
+                <span>${nom}</span>
+              </label>
+            `).join("")}
+          </div>
 
           <label>Intensité</label>
           <select onchange="modifierCours(${c.index}, 'intensite', Number(this.value))">
@@ -432,6 +441,7 @@ function afficherPlanning() {
               </div>
 
               <div class="${nomLong}">${c.activite}</div>
+              ${texteIntervenants(c) ? `<div class="course-coaches">👤 ${texteIntervenants(c)}</div>` : ""}
             </div>
           `;
         }).join("")}
@@ -505,7 +515,6 @@ function afficherVueTravail() {
 }
 
 function afficherTout() {
-  mettreAJourHorairesMusculationAffiche();
   afficherListeCours();
   afficherPlanning();
   afficherVueTravail();
@@ -756,137 +765,13 @@ function telechargerFichier(nom, contenu, type = "text/html;charset=utf-8") {
 }
 
 
-const COURSE_DETAILS_KEY = "dojo-course-details-v31";
-const DEFAULT_COURSE_DETAILS = {
-  "Judo": {
-    "coach": "",
-    "description": "Le judo est un art martial basé sur les projections, les immobilisations et le contrôle de l’adversaire. Il développe la confiance en soi, le respect, la discipline et la maîtrise de soi, dans un esprit de partage et de progression."
-  },
-  "Karaté": {
-    "coach": "",
-    "description": "Le karaté est un art martial fondé sur les techniques de coups de poing, de pied et de défense. Il développe la concentration, la maîtrise de soi, la discipline et le respect, tout en améliorant la coordination et la confiance en soi."
-  },
-  "Karaté 6 ans et plus": {
-    "coach": "",
-    "description": "Cours de karaté accessible dès 6 ans. Les pratiquants découvrent et développent les techniques de base, la coordination, la concentration, la discipline et le respect, dans une progression adaptée à leur âge."
-  },
-  "Karaté + de 12 ans": {
-    "coach": "",
-    "description": "Cours de karaté destiné aux pratiquants de plus de 12 ans. Le travail porte sur l’approfondissement technique, la précision, la vitesse, la condition physique, la maîtrise de soi et la progression personnelle."
-  },
-
-  "Full Contact": {
-    "coach": "",
-    "description": "Le Full Contact combine puissance, vitesse et précision. Cette discipline améliore la condition physique, les réflexes et la maîtrise de soi dans un environnement sécurisé."
-  },
-  "Cross Training": {
-    "coach": "",
-    "description": "Combinaison d’exercices de cardio, de renforcement musculaire et de mobilité. Idéal pour améliorer sa condition physique générale."
-  },
-  "Fit Rox / Crosstraining": {
-    "coach": "",
-    "description": "Cours combinant cardio et renforcement musculaire pour un entraînement complet."
-  },
-  "Step": {
-    "coach": "",
-    "description": "Cours utilisant un step, une marche, pour réaliser des mouvements en rythme et chorégraphiés."
-  },
-  "Biking": {
-    "coach": "",
-    "description": "Cours de vélo indoor basé sur un travail de force, de vitesse et de puissance."
-  },
-  "Zumba": {
-    "coach": "",
-    "description": "La Zumba est un cours de fitness rythmé et ludique, qui mélange danse latine et mouvements cardio."
-  },
-  "Cardio Box": {
-    "coach": "",
-    "description": "Mouvements de boxe et de karaté couplés à des phases de renforcement musculaire."
-  },
-  "Body Move": {
-    "coach": "",
-    "description": "Cours mêlant cardio, renforcement musculaire et coordination, en musique et dans la bonne humeur."
-  },
-  "Body Move Kids": {
-    "coach": "",
-    "description": "Cours mêlant cardio, renforcement musculaire et coordination, en musique et dans la bonne humeur, dans un format adapté aux enfants."
-  },
-  "Body Move Seniors": {
-    "coach": "",
-    "description": "Cours mêlant cardio, renforcement musculaire et coordination, en musique et dans la bonne humeur, dans un format adapté aux seniors."
-  },
-  "Instant Papote": {
-    "coach": "",
-    "description": "Moment convivial d'échange, de discussion et de lien social à destination des participants."
-  },
-
-  "Gym Douce": {
-    "coach": "",
-    "description": "Renforcement musculaire de l’ensemble du corps, sans charges. Ce cours est idéal pour la reprise d’une activité ou en entretien."
-  },
-  "Gym Ball": {
-    "coach": "",
-    "description": "Cours sur swiss ball renforçant les muscles profonds, l’équilibre et la posture."
-  },
-  "Body Sculpt": {
-    "coach": "",
-    "description": "Cours de renforcement musculaire complet utilisant du petit matériel pour tonifier l’ensemble du corps."
-  },
-  "Abdos Flash": {
-    "coach": "",
-    "description": "Cours ciblé sur le renforcement de la sangle abdominale et des muscles du dos pour améliorer le gainage et la posture."
-  },
-  "Abdos": {
-    "coach": "",
-    "description": "Cours ciblé sur le renforcement de la sangle abdominale et des muscles du dos pour améliorer le gainage et la posture."
-  },
-  "Cuisses Fessiers": {
-    "coach": "",
-    "description": "Cours ciblé sur le renforcement et la tonification des cuisses, des fessiers et des jambes."
-  },
-  "Cuisses Abdos Fessiers": {
-    "coach": "",
-    "description": "Cours ciblé sur le renforcement et la tonification des cuisses, des abdominaux et des fessiers."
-  },
-  "Yoga": {
-    "coach": "",
-    "description": "Yoga dynamique qui enchaîne les postures en harmonie avec la respiration. Il améliore la souplesse, la force et le bien-être."
-  },
-  "Yin Yoga": {
-    "coach": "",
-    "description": "Yoga doux et méditatif favorisant la relaxation, la souplesse et le lâcher-prise grâce à des postures maintenues plusieurs minutes."
-  },
-  "Pilates": {
-    "coach": "",
-    "description": "Méthode douce qui renforce les muscles profonds, améliore la posture, la souplesse et le contrôle du corps."
-  },
-  "Gym Bien-être": {
-    "coach": "",
-    "description": "Gymnastique douce adaptée à tous, favorisant le renforcement musculaire, la mobilité et le bien-être au quotidien."
-  },
-  "Stretching": {
-    "coach": "",
-    "description": "Cours d’étirements favorisant la souplesse, la mobilité articulaire et la récupération musculaire."
-  },
-  "Yogalates": {
-    "coach": "",
-    "description": "Cours associant les bienfaits du yoga et du Pilates pour améliorer la posture, la souplesse et le renforcement des muscles profonds."
-  },
-  "Éveil Kids": {
-    "coach": "",
-    "description": "À partir de 15 mois, l’enfant découvre une activité conçue pour favoriser son développement moteur dans un environnement ludique, sécurisé et bienveillant. Chaque séance est adaptée à son âge afin de lui permettre d’évoluer à son rythme tout en prenant plaisir à bouger."
-  }
-};
+const COURSE_DETAILS_KEY = "dojo-course-details-v30";
 let courseDetails = {};
 try {
-  const savedDetails = JSON.parse(localStorage.getItem(COURSE_DETAILS_KEY) || "{}") || {};
-  courseDetails = structuredClone(DEFAULT_COURSE_DETAILS);
-  Object.entries(savedDetails).forEach(([nom, fiche]) => {
-    courseDetails[nom] = { ...(courseDetails[nom] || { coach: "", description: "" }), ...(fiche || {}) };
-  });
+  courseDetails = JSON.parse(localStorage.getItem(COURSE_DETAILS_KEY) || "{}") || {};
 } catch (error) {
   console.warn("Les fiches enregistrées étaient illisibles. Une bibliothèque vide a été recréée.", error);
-  courseDetails = structuredClone(DEFAULT_COURSE_DETAILS);
+  courseDetails = {};
 }
 
 function toutesLesActivites() {
@@ -896,13 +781,12 @@ function toutesLesActivites() {
 }
 
 function ficheCours(nom) {
-  return courseDetails[nom] || DEFAULT_COURSE_DETAILS[nom] || { coach: "", description: "" };
+  return courseDetails[nom] || { description: "" };
 }
 
 function sauvegarderFicheCours() {
   const nom = document.getElementById("details-course-select").value;
   courseDetails[nom] = {
-    coach: document.getElementById("details-coach").value.trim(),
     description: document.getElementById("details-description").value.trim()
   };
   localStorage.setItem(COURSE_DETAILS_KEY, JSON.stringify(courseDetails));
@@ -914,7 +798,6 @@ function sauvegarderFicheCours() {
 function chargerFicheDansEditeur() {
   const nom = document.getElementById("details-course-select").value;
   const fiche = ficheCours(nom);
-  document.getElementById("details-coach").value = fiche.coach || "";
   document.getElementById("details-description").value = fiche.description || "";
   document.getElementById("details-save-status").textContent = "";
 }
@@ -941,7 +824,7 @@ async function exporterPageQr() {
   const bouton = document.getElementById("btn-export-web");
   const planningAvantExport = planningActif;
   bouton.disabled = true;
-  bouton.textContent = "⏳ Création de la page V33.13…";
+  bouton.textContent = "⏳ Création de la page…";
 
   try {
     const imageLogo = document.getElementById("club-logo");
@@ -979,68 +862,84 @@ async function exporterPageQr() {
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f172a">
-<title>Planning mobile du Dojo Club de Vieux-Condé</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plannings du Dojo Club de Vieux-Condé</title>
 <style>
-:root{font-family:Arial,Helvetica,sans-serif;color:#0f172a;background:#0f172a;--blue:#1677d2;--red:#c9252d}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#0f172a}button{font:inherit}.hidden{display:none!important}
-.home{min-height:100vh;padding:28px 16px;display:flex;align-items:flex-start;justify-content:center;background:radial-gradient(circle at 20% 0,#334b70,#0f172a 55%)}
-.home-card{width:min(100%,570px);overflow:hidden;background:#fff;border-radius:28px;box-shadow:0 28px 80px rgba(0,0,0,.42)}
-.home-top{padding:28px 20px 22px;text-align:center;background:linear-gradient(145deg,#edf4fb,#fff)}
-.home-logo{width:92px;height:92px;object-fit:contain;border-radius:50%;background:#fff;border:4px solid #3b82a8;padding:4px;box-shadow:0 8px 24px rgba(15,23,42,.2)}
-.home-card h1{font-size:30px;line-height:1.05;margin:14px 0 7px}.home-card p{margin:0;color:#64748b;font-weight:800}.choices{display:grid;gap:14px;padding:20px}
-.choice{border:0;border-radius:19px;padding:21px 16px;color:#fff;font-weight:950;font-size:20px;cursor:pointer;box-shadow:0 8px 20px rgba(15,23,42,.18);touch-action:manipulation}.choice-fitness{background:linear-gradient(135deg,#1688e7,#0b5faf)}.choice-martial{background:linear-gradient(135deg,#e43c46,#a81522)}
-.view{display:none;min-height:100vh;background:#eef2f7}.view.active{display:block}.toolbar{position:sticky;top:0;z-index:100;background:rgba(15,23,42,.97);padding:11px max(14px,env(safe-area-inset-right)) 11px max(14px,env(safe-area-inset-left));display:flex;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.28)}
-.toolbar button{border:0;border-radius:13px;padding:12px 24px;background:#fff;color:var(--blue);font-size:18px;font-weight:950;cursor:pointer}.mobile-planning{width:min(100%,700px);margin:0 auto;padding:14px 12px 42px}
-.mobile-header{position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(115deg,#e8edf5 0%,#dce6f0 63%,#0873aa 100%);border:4px solid #fff;box-shadow:0 8px 24px rgba(15,23,42,.18);padding:18px 16px;margin-bottom:15px}.mobile-header:after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:linear-gradient(90deg,#ef233c 0 34%,#0ea5e9 34% 72%,#ef233c 72%)}
-.brand-row{display:flex;align-items:center;gap:13px}.brand-logo{width:76px;height:76px;border-radius:50%;background:#fff;border:4px solid #3b82a8;object-fit:contain;padding:4px;flex:0 0 auto}.brand-placeholder{display:grid;place-items:center;font-size:38px}.brand-title{text-align:left;min-width:0}.brand-title h1{margin:0;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.38);font-size:clamp(28px,8vw,40px);line-height:.95;letter-spacing:2px}.brand-title h2{margin:4px 0 0;color:#bcecff;text-shadow:0 2px 4px rgba(0,0,0,.38);font-size:clamp(18px,5.5vw,27px);line-height:1}.season{display:inline-block;margin-top:10px;background:#df2935;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:950;letter-spacing:1px}
-.muscu-hours{background:#fff;border-radius:19px;padding:14px;margin-bottom:14px;box-shadow:0 8px 22px rgba(15,23,42,.12);border-top:6px solid var(--blue)}.muscu-hours h3{margin:0 0 6px;text-align:center;font-size:23px}.muscu-hours .subtitle{text-align:center;font-weight:950;color:var(--blue);margin-bottom:12px}.muscu-grid{display:grid;gap:9px}.muscu-line{display:grid;grid-template-columns:minmax(108px,.9fr) 1.5fr;gap:12px;align-items:start;padding:10px 11px;background:#f1f5f9;border-radius:12px}.muscu-day{font-weight:950}.muscu-time{font-weight:850;color:#334155;line-height:1.45}.muscu-access{margin-top:12px;text-align:center;font-weight:950;color:#166534;background:#dcfce7;border-radius:12px;padding:11px}
-.day{background:#fff;border-radius:19px;padding:12px;margin-bottom:14px;box-shadow:0 8px 22px rgba(15,23,42,.12)}.day h3{margin:0 0 12px;background:linear-gradient(#171a21,#05060a);color:#fff;border-radius:13px;padding:13px 10px;text-align:center;font-size:22px;letter-spacing:1px}
-.course{display:block;width:100%;border-radius:17px;padding:14px;margin-top:11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 6px 14px rgba(15,23,42,.14);border:1px solid rgba(255,255,255,.8);cursor:pointer;position:relative;text-align:inherit;touch-action:manipulation;-webkit-tap-highlight-color:rgba(14,165,233,.18)}.course>span{display:block}.course:after{content:'Découvrir le cours  ›';display:block;text-align:center;margin-top:10px;padding-top:9px;border-top:1px solid rgba(15,23,42,.17);font-size:13px;font-weight:950;opacity:.76}.course:active{transform:scale(.99)}.course:first-of-type{margin-top:0}.time{font-size:21px;font-weight:950;text-align:center;line-height:1.1}.name{font-size:clamp(22px,6.8vw,32px);font-weight:950;line-height:1.02;text-align:center;margin:12px 0 10px;overflow-wrap:anywhere}.meta{display:flex!important;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:850;text-align:center}.intensity{margin-top:8px;text-align:center;font-size:17px;letter-spacing:2px}.footer-note{text-align:center;color:#64748b;font-weight:750;font-size:13px;padding:8px 0 0}
-.sheet-overlay{position:fixed;inset:0;z-index:500;background:rgba(2,6,23,.78);display:none;align-items:flex-end;justify-content:center;padding:10px}.sheet-overlay.open{display:flex}.sheet{width:min(100%,700px);max-height:92vh;overflow:auto;background:#fff;border-radius:28px 28px 18px 18px;box-shadow:0 -24px 70px rgba(0,0,0,.4)}.sheet-grip{width:58px;height:5px;border-radius:9px;background:#cbd5e1;margin:10px auto 7px}.sheet-hero{position:relative;overflow:hidden;padding:25px 18px 22px;text-align:center;color:#fff;background:linear-gradient(135deg,#1677d2,#0f3f78)}.sheet-hero.martial{background:linear-gradient(135deg,#d93842,#84131d)}.sheet-icon{width:62px;height:62px;margin:0 auto 10px;display:grid;place-items:center;border-radius:20px;background:rgba(255,255,255,.17);font-size:33px;border:1px solid rgba(255,255,255,.35)}.sheet-hero h2{margin:0;font-size:30px;line-height:1.05}.sheet-kicker{margin-top:7px;font-size:13px;font-weight:950;text-transform:uppercase;letter-spacing:1.1px;opacity:.86}.sheet-body{padding:16px 16px 18px}.quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.quick-card{min-height:86px;background:#f1f5f9;border-radius:15px;padding:12px;border:1px solid #e2e8f0}.quick-card.full{grid-column:1/-1}.quick-icon{font-size:21px;margin-bottom:5px}.sheet-label{display:block;color:#64748b;font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}.sheet-value{font-weight:950;color:#0f172a;line-height:1.35}.intensity-large{font-size:20px;letter-spacing:3px}.description-card{margin-top:12px;padding:16px;border-radius:17px;background:linear-gradient(145deg,#f8fafc,#edf2f7);border-left:5px solid var(--blue)}.description-card.martial{border-left-color:var(--red)}.description-title{font-size:13px;text-transform:uppercase;letter-spacing:.8px;font-weight:950;color:#475569;margin-bottom:8px}.sheet-description{white-space:pre-line;font-weight:750;line-height:1.6;color:#334155;font-size:16px}.all-times{margin-top:12px;padding:14px;border-radius:17px;background:#fff7ed;border:1px solid #fed7aa}.all-times-title{font-size:13px;text-transform:uppercase;letter-spacing:.8px;font-weight:950;color:#9a3412;margin-bottom:8px}.slot{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #fed7aa;font-weight:850}.slot:first-of-type{border-top:0}.slot-day{color:#7c2d12}.slot-time{text-align:right}.sheet-close{width:100%;border:0;border-radius:15px;padding:15px;background:#1677d2;color:#fff;font-size:18px;font-weight:950;cursor:pointer;margin-top:14px}.version-badge{position:fixed;right:9px;bottom:9px;z-index:120;background:#0f172a;color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:950;box-shadow:0 4px 12px rgba(0,0,0,.25)}
-@media(min-width:720px){.mobile-planning{padding-left:20px;padding-right:20px}.name{font-size:30px}.sheet-overlay{align-items:center}.sheet{border-radius:28px}}
+:root{font-family:Arial,Helvetica,sans-serif;color:#111827;background:#0f172a}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#0f172a}button{font:inherit}
+.home{min-height:100vh;padding:24px 16px;display:flex;align-items:flex-start;justify-content:center;background:linear-gradient(145deg,#0f172a,#24324a)}
+.home.hidden{display:none}.home-card{width:min(100%,560px);background:#fff;border-radius:24px;padding:26px 18px;box-shadow:0 24px 70px rgba(0,0,0,.35);text-align:center}
+.home-card h1{font-size:30px;line-height:1.05;margin:0 0 8px}.home-card p{margin:0;color:#64748b;font-weight:700}.choices{display:grid;gap:14px;margin-top:26px}
+.choice{border:0;border-radius:16px;padding:19px 16px;color:#fff;font-weight:900;font-size:20px;cursor:pointer}.choice-fitness{background:#1677d2}.choice-martial{background:#c9252d}
+.view{display:none;min-height:100vh;background:#eef2f7}.view.active{display:block}.toolbar{position:sticky;top:0;z-index:100;background:rgba(15,23,42,.97);padding:12px max(14px,env(safe-area-inset-right)) 12px max(14px,env(safe-area-inset-left));display:flex;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.28)}
+.toolbar button{border:0;border-radius:13px;padding:12px 22px;background:#fff;color:#1677d2;font-size:18px;font-weight:900;cursor:pointer}.mobile-planning{width:min(100%,680px);margin:0 auto;padding:14px 12px 36px}
+.mobile-header{position:relative;overflow:hidden;border-radius:20px;background:linear-gradient(115deg,#e8edf5 0%,#dce6f0 66%,#0873aa 100%);border:4px solid #fff;box-shadow:0 8px 24px rgba(15,23,42,.18);padding:18px 16px;margin-bottom:15px}
+.mobile-header:after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:linear-gradient(90deg,#ef233c 0 34%,#0ea5e9 34% 72%,#ef233c 72%)}
+.brand-row{display:flex;align-items:center;gap:13px}.brand-logo{width:76px;height:76px;border-radius:50%;background:#fff;border:4px solid #3b82a8;object-fit:contain;padding:4px;flex:0 0 auto}.brand-placeholder{display:grid;place-items:center;font-size:38px}
+.brand-title{text-align:left;min-width:0}.brand-title h1{margin:0;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.38);font-size:clamp(28px,8vw,40px);line-height:.95;letter-spacing:2px}.brand-title h2{margin:4px 0 0;color:#bcecff;text-shadow:0 2px 4px rgba(0,0,0,.38);font-size:clamp(18px,5.5vw,27px);line-height:1}.season{display:inline-block;margin-top:10px;background:#df2935;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:900;letter-spacing:1px}
+.muscu-hours{background:#fff;border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 8px 22px rgba(15,23,42,.12);border-top:6px solid #1677d2}.muscu-hours h3{margin:0 0 6px;text-align:center;font-size:23px;color:#0f172a}.muscu-hours .subtitle{text-align:center;font-weight:900;color:#1677d2;margin-bottom:12px}.muscu-grid{display:grid;gap:9px}.muscu-line{display:grid;grid-template-columns:minmax(108px,.9fr) 1.5fr;gap:12px;align-items:start;padding:10px 11px;background:#f1f5f9;border-radius:12px}.muscu-day{font-weight:950;color:#0f172a}.muscu-time{font-weight:850;color:#334155;line-height:1.45}.muscu-access{margin-top:12px;text-align:center;font-weight:900;color:#166534;background:#dcfce7;border-radius:12px;padding:11px}
+.day{background:#fff;border-radius:18px;padding:12px;margin-bottom:14px;box-shadow:0 8px 22px rgba(15,23,42,.12)}.day h3{margin:0 0 12px;background:linear-gradient(#171a21,#05060a);color:#fff;border-radius:13px;padding:13px 10px;text-align:center;font-size:22px;letter-spacing:1px}
+.course{display:block;width:100%;border-radius:16px;padding:14px 14px 13px;margin-top:11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 5px 12px rgba(15,23,42,.12);border:1px solid rgba(255,255,255,.75);cursor:pointer;position:relative;text-align:inherit;touch-action:manipulation;-webkit-tap-highlight-color:rgba(14,165,233,.18)}.course>span{display:block}.course:after{content:'Voir la fiche ›';display:block;text-align:center;margin-top:10px;font-size:13px;font-weight:900;opacity:.72}.course:active{transform:scale(.99)}.course:focus-visible{outline:4px solid #0ea5e9;outline-offset:2px}.course:first-of-type{margin-top:0}
+.time{font-size:22px;font-weight:950;text-align:center;line-height:1.1;padding-bottom:9px;border-bottom:1px solid rgba(15,23,42,.22)}.name{font-size:clamp(22px,6.8vw,32px);font-weight:950;line-height:1.02;text-align:center;margin:12px 0 10px;overflow-wrap:anywhere}.meta{display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:850;text-align:center}.intensity{margin-top:8px;text-align:center;font-size:17px;letter-spacing:2px}.footer-note{text-align:center;color:#64748b;font-weight:700;font-size:13px;padding:8px 0 0}
+.sheet-overlay{position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.72);display:none;align-items:flex-end;justify-content:center;padding:12px}.sheet-overlay.open{display:flex}.sheet{width:min(100%,680px);max-height:88vh;overflow:auto;background:#fff;border-radius:24px 24px 18px 18px;padding:22px 18px 18px;box-shadow:0 -20px 60px rgba(0,0,0,.32)}.sheet-grip{width:58px;height:5px;border-radius:9px;background:#cbd5e1;margin:-8px auto 16px}.sheet h2{margin:0;text-align:center;font-size:28px;line-height:1.05}.sheet-grid{display:grid;gap:10px;margin:18px 0}.sheet-row{background:#f1f5f9;border-radius:13px;padding:12px}.sheet-label{display:block;color:#64748b;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}.sheet-value{font-weight:900;color:#0f172a;line-height:1.35}.sheet-description{white-space:pre-line;font-weight:700;line-height:1.55;color:#334155}.sheet-close{width:100%;border:0;border-radius:14px;padding:14px;background:#1677d2;color:#fff;font-size:18px;font-weight:950;cursor:pointer}
+@media(min-width:720px){.mobile-planning{padding-left:20px;padding-right:20px}.name{font-size:30px}}
 </style>
 </head>
 <body>
-<section id="home" class="home"><div class="home-card"><div class="home-top"><div id="homeLogo"></div><h1>📅 Plannings 2026-2027</h1><p>Dojo Club de Vieux-Condé</p></div><div class="choices"><button type="button" class="choice choice-fitness" data-open="fitness">🏋️ Fitness &amp; Bien-être</button><button type="button" class="choice choice-martial" data-open="martial">🥋 Arts martiaux &amp; disciplines associées</button></div></div></section>
-<section id="view" class="view"><div class="toolbar"><button type="button" id="backButton">← Retour</button></div><main id="planning" class="mobile-planning"></main></section>
-<div id="sheetOverlay" class="sheet-overlay" aria-hidden="true"><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="sheet-grip"></div><div id="sheetHero" class="sheet-hero"><div id="sheetIcon" class="sheet-icon"></div><h2 id="sheetTitle"></h2><div id="sheetKicker" class="sheet-kicker"></div></div><div class="sheet-body"><div id="sheetQuick" class="quick-grid"></div><div id="sheetDescription" class="description-card"></div><div id="sheetTimes" class="all-times"></div><button type="button" id="closeSheet" class="sheet-close">Fermer</button></div></section></div>
-<div class="version-badge">V33.13</div>
+<section id="home" class="home"><div class="home-card"><h1>📅 Plannings 2026-2027</h1><p>Dojo Club de Vieux-Condé</p><div class="choices"><button type="button" class="choice choice-fitness" data-action="open-planning" data-type="fitness">🏋️ Fitness &amp; Bien-être</button><button type="button" class="choice choice-martial" data-action="open-planning" data-type="martial">🥋 Arts martiaux &amp; disciplines associées</button></div></div></section>
+<section id="view" class="view"><div class="toolbar"><button type="button" data-action="back">← Retour</button></div><main id="planning" class="mobile-planning"></main></section>
+<div id="sheetOverlay" class="sheet-overlay"><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="sheet-grip"></div><h2 id="sheetTitle"></h2><div id="sheetContent" class="sheet-grid"></div><button type="button" class="sheet-close" data-action="close-sheet">Fermer</button></section></div>
 <script>
 'use strict';
 const DONNEES=__DONNEES__;
 const JOURS=__JOURS__;
-let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
-function logoAccueil(){var d=DONNEES.fitness||DONNEES.martial;document.getElementById('homeLogo').innerHTML=d&&d.logo?'<img class="home-logo" src="'+d.logo+'" alt="Logo du Dojo">':'<div class="home-logo" style="display:grid;place-items:center;font-size:42px">🥋</div>';}
-function ouvrirPlanning(type){typeActif=type;document.getElementById('home').classList.add('hidden');document.getElementById('view').classList.add('active');rendre(type);window.scrollTo(0,0);}
+function ouvrirPlanning(type){document.getElementById('home').classList.add('hidden');document.getElementById('view').classList.add('active');rendre(type);window.scrollTo(0,0);}
 function retourAccueil(){fermerFiche();document.getElementById('view').classList.remove('active');document.getElementById('home').classList.remove('hidden');window.scrollTo(0,0);}
-function iconeActivite(nom,type){if(type==='martial'){if(nom.indexOf('Judo')>=0)return '🥋';if(nom.indexOf('Karat')>=0)return '🥊';if(nom.indexOf('Full')>=0)return '🥊';return '🎯';}var n=nom.toLowerCase();if(n.indexOf('bike')>=0||n.indexOf('biking')>=0)return '🚴';if(n.indexOf('yoga')>=0||n.indexOf('pilates')>=0||n.indexOf('stretch')>=0)return '🧘';if(n.indexOf('box')>=0)return '🥊';if(n.indexOf('zumba')>=0||n.indexOf('move')>=0||n.indexOf('step')>=0)return '🎵';if(n.indexOf('cross')>=0||n.indexOf('rox')>=0)return '🔥';return '🏋️';}
-function ouvrirFiche(type,index){var d=DONNEES[type];if(!d)return;var c=d.cours[index];if(!c)return;var fiche=d.fiches&&d.fiches[c.activite]?d.fiches[c.activite]:{};var a=(d.activites||[]).find(function(x){return x.nom===c.activite;})||{};var salle=(d.salles||[]).find(function(x){return x.nom===c.salle;})||{};var isMartial=type==='martial';document.getElementById('sheetTitle').textContent=c.activite;document.getElementById('sheetKicker').textContent=isMartial?'Art martial & discipline associée':'Fitness & bien-être';document.getElementById('sheetIcon').textContent=iconeActivite(c.activite,type);document.getElementById('sheetHero').className='sheet-hero'+(isMartial?' martial':'');var coach=fiche.coach||'À renseigner';var quick='<div class="quick-card"><div class="quick-icon">👤</div><span class="sheet-label">Coach</span><div class="sheet-value">'+echapper(coach)+'</div></div><div class="quick-card"><div class="quick-icon">🕒</div><span class="sheet-label">Horaire</span><div class="sheet-value">'+echapper(c.debut)+' - '+echapper(c.fin)+'</div></div><div class="quick-card"><div class="quick-icon">'+echapper(salle.icone||'📍')+'</div><span class="sheet-label">Lieu</span><div class="sheet-value">'+echapper(c.salle)+'</div></div>';if(type==='fitness'){var n=Number(c.intensite||a.intensite||0);quick+='<div class="quick-card"><div class="quick-icon">🔥</div><span class="sheet-label">Intensité</span><div class="sheet-value intensity-large">'+'●'.repeat(n)+'○'.repeat(Math.max(0,4-n))+'</div></div>';}else{quick+='<div class="quick-card"><div class="quick-icon">📅</div><span class="sheet-label">Jour</span><div class="sheet-value">'+echapper(c.jour)+'</div></div>';}document.getElementById('sheetQuick').innerHTML=quick;var desc=document.getElementById('sheetDescription');desc.className='description-card'+(isMartial?' martial':'');desc.innerHTML='<div class="description-title">À propos du cours</div><div class="sheet-description">'+echapper(fiche.description||'Description à renseigner dans le logiciel avant le prochain export.')+'</div>';var slots=(d.cours||[]).filter(function(x){return x.activite===c.activite;}).sort(function(x,y){var a=JOURS.indexOf(x.jour),b=JOURS.indexOf(y.jour);return a-b||x.debut.localeCompare(y.debut);});document.getElementById('sheetTimes').innerHTML='<div class="all-times-title">Tous les créneaux de cette activité</div>'+slots.map(function(x){return '<div class="slot"><span class="slot-day">'+echapper(x.jour)+'</span><span class="slot-time">'+echapper(x.debut)+' - '+echapper(x.fin)+' · '+echapper(x.salle)+'</span></div>';}).join('');document.getElementById('sheetOverlay').classList.add('open');document.getElementById('sheetOverlay').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
-function fermerFiche(){document.getElementById('sheetOverlay').classList.remove('open');document.getElementById('sheetOverlay').setAttribute('aria-hidden','true');document.body.style.overflow='';}
-function rendre(type){var d=DONNEES[type];if(!d)return;var activites={};(d.activites||[]).forEach(function(a){activites[a.nom]=a;});var salles={};(d.salles||[]).forEach(function(s){salles[s.nom]=s;});var logo=d.logo?'<img class="brand-logo" src="'+d.logo+'" alt="Logo du Dojo">':'<div class="brand-logo brand-placeholder">🥋</div>';var html='<header class="mobile-header"><div class="brand-row">'+logo+'<div class="brand-title"><h1>'+echapper(d.titre)+'</h1><h2>'+echapper(d.sousTitre)+'</h2><span class="season">SAISON 2026-2027</span></div></div></header>';html+='<section class="muscu-hours"><h3>🏋️ ESPACE MUSCULATION</h3><div class="subtitle">Horaires d’ouverture</div><div class="muscu-grid">__HORAIRES_MUSCU__</div><div class="muscu-access">Accès libre pendant les horaires d’ouverture.</div></section>';JOURS.forEach(function(jour){var liste=[];(d.cours||[]).forEach(function(c,index){if(c.jour===jour){var copie=Object.assign({},c,{__index:index});liste.push(copie);}});liste.sort(function(a,b){return a.debut.localeCompare(b.debut);});if(!liste.length)return;html+='<section class="day"><h3>'+echapper(jour.toUpperCase())+'</h3>';liste.forEach(function(c){var a=activites[c.activite]||{},salle=salles[c.salle]||{},bg=a.couleur||'#e2e8f0',fg=a.couleurTexte||'#111827',intensite='';if(type==='fitness'){var n=Number(c.intensite||a.intensite||0);intensite='<span class="intensity" aria-label="Intensité '+n+' sur 4">'+'●'.repeat(n)+'○'.repeat(Math.max(0,4-n))+'</span>';}html+='<button type="button" class="course" data-type="'+echapper(type)+'" data-index="'+c.__index+'" style="background:'+echapper(bg)+';color:'+echapper(fg)+'"><span class="time">'+echapper(c.debut)+' - '+echapper(c.fin)+'</span><span class="name">'+echapper(c.activite)+'</span><span class="meta"><span>'+echapper(salle.icone||'📍')+'</span><span>'+echapper(c.salle)+'</span></span>'+intensite+'</button>';});html+='</section>';});html+='<div class="footer-note">Planning susceptible d’évoluer. Consultez cette page pour la dernière version.</div>';document.getElementById('planning').innerHTML=html;}
-document.addEventListener('click',function(event){var open=event.target.closest('[data-open]');if(open){ouvrirPlanning(open.getAttribute('data-open'));return;}var course=event.target.closest('.course');if(course){event.preventDefault();ouvrirFiche(course.getAttribute('data-type'),Number(course.getAttribute('data-index')));return;}if(event.target.id==='backButton'){retourAccueil();return;}if(event.target.id==='closeSheet'){fermerFiche();return;}if(event.target.id==='sheetOverlay'){fermerFiche();}});
+function ouvrirFiche(type,index){var d=DONNEES[type];if(!d)return;var c=d.cours[index];if(!c)return;var fiche=d.fiches&&d.fiches[c.activite]?d.fiches[c.activite]:{};var a=(d.activites||[]).find(function(x){return x.nom===c.activite;})||{};document.getElementById('sheetTitle').textContent=c.activite;var lignes='<div class="sheet-row"><span class="sheet-label">Coach</span><div class="sheet-value">'+echapper(fiche.coach||'À renseigner')+'</div></div>'+'<div class="sheet-row"><span class="sheet-label">Horaire</span><div class="sheet-value">'+echapper(c.debut)+' - '+echapper(c.fin)+'</div></div>'+'<div class="sheet-row"><span class="sheet-label">Lieu</span><div class="sheet-value">'+echapper(c.salle)+'</div></div>';if(type==='fitness'){var n=Number(c.intensite||a.intensite||0);lignes+='<div class="sheet-row"><span class="sheet-label">Intensité</span><div class="sheet-value">'+'●'.repeat(n)+'○'.repeat(Math.max(0,4-n))+'</div></div>';}lignes+='<div class="sheet-row"><span class="sheet-label">Description</span><div class="sheet-description">'+echapper(fiche.description||'Description à renseigner dans le logiciel avant le prochain export.')+'</div></div>';document.getElementById('sheetContent').innerHTML=lignes;document.getElementById('sheetOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function fermerFiche(){document.getElementById('sheetOverlay').classList.remove('open');document.body.style.overflow='';}
+function rendre(type){
+  var d=DONNEES[type]; if(!d)return;
+  var activites={}; (d.activites||[]).forEach(function(a){activites[a.nom]=a;});
+  var salles={}; (d.salles||[]).forEach(function(s){salles[s.nom]=s;});
+  var logo=d.logo?'<img class="brand-logo" src="'+d.logo+'" alt="Logo du Dojo">':'<div class="brand-logo brand-placeholder">🥋</div>';
+  var html='<header class="mobile-header"><div class="brand-row">'+logo+'<div class="brand-title"><h1>'+echapper(d.titre)+'</h1><h2>'+echapper(d.sousTitre)+'</h2><span class="season">SAISON 2026-2027</span></div></div></header>';
+  html+='<section class="muscu-hours"><h3>🏋️ ESPACE MUSCULATION</h3><div class="subtitle">Horaires d’ouverture</div><div class="muscu-grid"><div class="muscu-line"><div class="muscu-day">Lundi</div><div class="muscu-time">13h45 à 20h45</div></div><div class="muscu-line"><div class="muscu-day">Mardi au vendredi</div><div class="muscu-time">8h45 à 12h00<br>13h45 à 20h45</div></div><div class="muscu-line"><div class="muscu-day">Samedi</div><div class="muscu-time">8h45 à 12h00<br>13h45 à 16h30</div></div><div class="muscu-line"><div class="muscu-day">Dimanche</div><div class="muscu-time">8h45 à 12h00</div></div></div><div class="muscu-access">Accès libre pendant les horaires d’ouverture.</div></section>';
+  JOURS.forEach(function(jour){
+    var liste=[];
+    (d.cours||[]).forEach(function(c,index){if(c.jour===jour){var copie={};Object.keys(c).forEach(function(k){copie[k]=c[k];});copie.__index=index;liste.push(copie);}});
+    liste.sort(function(a,b){return a.debut.localeCompare(b.debut);}); if(!liste.length)return;
+    html+='<section class="day"><h3>'+echapper(jour.toUpperCase())+'</h3>';
+    liste.forEach(function(c){
+      var a=activites[c.activite]||{}, salle=salles[c.salle]||{}, bg=a.couleur||'#e2e8f0', fg=a.couleurTexte||'#111827', intensite='';
+      if(type==='fitness'){var n=Number(c.intensite||a.intensite||0);intensite='<span class="intensity" aria-label="Intensité '+n+' sur 4">'+'●'.repeat(n)+'○'.repeat(Math.max(0,4-n))+'</span>';}
+      html+='<button type="button" class="course" data-type="'+echapper(type)+'" data-index="'+c.__index+'" style="background:'+echapper(bg)+';color:'+echapper(fg)+'"><span class="time">'+echapper(c.debut)+' - '+echapper(c.fin)+'</span><span class="name">'+echapper(c.activite)+'</span><span class="meta"><span>'+echapper(salle.icone||'📍')+'</span><span>'+echapper(c.salle)+'</span></span>'+intensite+'</button>';
+    }); html+='</section>';
+  });
+  html+='<div class="footer-note">Planning susceptible d’évoluer. Consultez cette page pour la dernière version.</div>';
+  var planning=document.getElementById('planning'); planning.innerHTML=html;
+  var boutons=planning.querySelectorAll('.course');
+  for(var i=0;i<boutons.length;i++)(function(bouton){bouton.onclick=function(e){if(e){e.preventDefault();e.stopPropagation();}ouvrirFiche(bouton.getAttribute('data-type'),Number(bouton.getAttribute('data-index')));};})(boutons[i]);
+}
+document.querySelector('.choice-fitness').onclick=function(){ouvrirPlanning('fitness');};
+document.querySelector('.choice-martial').onclick=function(){ouvrirPlanning('martial');};
+document.querySelector('[data-action="back"]').onclick=retourAccueil;
+document.querySelector('[data-action="close-sheet"]').onclick=fermerFiche;
+document.getElementById('sheetOverlay').addEventListener('click',function(event){if(event.target===this)fermerFiche();});
 document.addEventListener('keydown',function(event){if(event.key==='Escape')fermerFiche();});
-logoAccueil();
 </script>
 </body>
 </html>`;
 
     const page = pageTemplate
       .replace("__DONNEES__", donneesJson)
-      .replace("__JOURS__", joursJson)
-      .replace("__HORAIRES_MUSCU__", genererHorairesMusculationMobile());
-
-    if (!page.includes("V33.13") || !page.includes("const DONNEES=")) {
-      throw new Error("Le contrôle interne de l’export V33.13 a échoué.");
-    }
+      .replace("__JOURS__", joursJson);
 
     telechargerFichier("index.html", page);
-    alert("Le fichier index.html V33.13 a été créé. Il contient le planning actuel, les fiches, les coachs et la nouvelle présentation mobile.");
+    alert("La page index.html a été créée. Les cours sont cliquables et les fiches enregistrées sont intégrées au fichier.");
   } catch (error) {
     console.error(error);
-    alert("L’export V33.13 n’a pas pu être créé. Ouvre l’application depuis son dossier extrait puis réessaie.");
+    alert("L’export n’a pas pu être créé. Ouvre l’application depuis son dossier extrait puis réessaie.");
   } finally {
     chargerPlanning(planningAvantExport);
     bouton.disabled = false;
@@ -1079,3 +978,123 @@ document.getElementById("btn-reset-images").addEventListener("click", () => {
 normaliserCoursPourPlanningActif();
 mettreAJourIdentitePlanning();
 afficherTout();
+
+
+/* ===== V42.0 : publication automatique PC -> mobile ===== */
+const PUBLICATION_API = "http://127.0.0.1:4172/api/publish";
+
+function afficherEtatPublication(message, type = "") {
+  const zone = document.getElementById("publish-status");
+  const texte = document.getElementById("publish-status-text");
+  if (!zone || !texte) return;
+  zone.hidden = false;
+  zone.classList.remove("success", "error");
+  if (type) zone.classList.add(type);
+  texte.textContent = message;
+}
+
+async function preparerDonneesMobiles() {
+  const planningAvantPublication = planningActif;
+  const imageLogo = document.getElementById("club-logo");
+  let logoDojoMobile = settings.logo || "";
+
+  if (imageLogo && imageLogo.getAttribute("src")) {
+    const urlLogo = new URL(imageLogo.getAttribute("src"), window.location.href).href;
+    logoDojoMobile = await convertirImageEnDataUrl(urlLogo);
+  }
+
+  const lirePlanningMobile = type => {
+    chargerPlanning(type);
+    const config = PLANNING_CONFIGS[type];
+    return {
+      type,
+      titre: config.titre,
+      sousTitre: config.sousTitre,
+      cours: structuredClone(cours),
+      activites: structuredClone(ACTIVITES),
+      salles: structuredClone(SALLES),
+      logo: logoDojoMobile,
+      fiches: structuredClone(courseDetails)
+    };
+  };
+
+  const donnees = {
+    fitness: lirePlanningMobile("fitness"),
+    martial: lirePlanningMobile("martial")
+  };
+
+  chargerPlanning(planningAvantPublication);
+  return donnees;
+}
+
+async function publierPlanningMobile() {
+  const bouton = document.getElementById("btn-publish");
+  bouton.disabled = true;
+  bouton.textContent = "⏳ Publication en cours…";
+  afficherEtatPublication("Préparation des cours et des fiches…");
+
+  try {
+    const donnees = await preparerDonneesMobiles();
+
+    afficherEtatPublication("Envoi au module de publication local…");
+    const reponse = await fetch(PUBLICATION_API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        donnees,
+        version: "V45.0",
+        message: "Mise à jour automatique du planning mobile"
+      })
+    });
+
+    const resultat = await reponse.json().catch(() => ({}));
+    if (!reponse.ok || !resultat.ok) {
+      throw new Error(resultat.error || "La publication a échoué.");
+    }
+
+    if (resultat.unchanged) {
+      afficherEtatPublication("ℹ️ Aucune modification détectée : rien à envoyer.", "success");
+      alert("Aucune modification à publier.");
+    } else {
+      const confirmation = resultat.online
+        ? `✅ ${resultat.version} est publiée et le site répond correctement.`
+        : `✅ ${resultat.version} est envoyée sur GitHub. GitHub Pages termine encore son déploiement.`;
+      afficherEtatPublication(confirmation, "success");
+      alert(
+        `Publication réussie !\n\n${resultat.version}\n` +
+        `Fitness : ${resultat.fitness} cours\n` +
+        `Arts martiaux : ${resultat.martial} cours\n\n` +
+        `L'application mobile va se mettre à jour.`
+      );
+    }
+  } catch (error) {
+    console.error(error);
+    afficherEtatPublication(
+      "❌ Publication impossible. Lance d’abord « DEMARRER-DOJO-MANAGER.bat », puis réessaie. " + error.message,
+      "error"
+    );
+    alert(
+      "Publication impossible.\n\n" +
+      "Double-clique sur DEMARRER-DOJO-MANAGER.bat, puis ouvre le planning depuis la page qui se lance."
+    );
+  } finally {
+    bouton.disabled = false;
+    bouton.textContent = "🚀 Publier sur le mobile";
+  }
+}
+
+document.getElementById("btn-publish")?.addEventListener("click", publierPlanningMobile);
+
+
+
+async function verifierModulePublication() {
+  try {
+    const reponse = await fetch("http://127.0.0.1:4172/api/status", { cache: "no-store" });
+    const resultat = await reponse.json();
+    if (!reponse.ok || !resultat.ok) throw new Error(resultat.error || "Module indisponible");
+    afficherEtatPublication("✅ Module de publication prêt.", "success");
+  } catch (error) {
+    afficherEtatPublication("⚠️ Publication non prête : " + error.message, "error");
+  }
+}
+window.addEventListener("load", verifierModulePublication);

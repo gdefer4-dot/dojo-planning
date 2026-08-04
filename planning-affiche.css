@@ -8168,3 +8168,375 @@ line-height:1!important;
     top:6.1mm!important;
   }
 }
+
+
+/* V42.0 - Publication automatique */
+.btn.publish{
+  background:linear-gradient(135deg,#7c3aed,#4f46e5);
+  color:#fff;
+  box-shadow:0 8px 20px rgba(79,70,229,.28);
+}
+.btn.publish:hover{filter:brightness(1.06)}
+.btn.publish:disabled{opacity:.65;cursor:wait}
+.publish-status{
+  margin:10px 0 14px;
+  padding:12px 13px;
+  border-radius:14px;
+  background:#111c31;
+  border:1px solid #334155;
+  color:#dbeafe;
+  font-size:13px;
+  line-height:1.45;
+}
+.publish-status-title{
+  color:#fff;
+  font-weight:950;
+  margin-bottom:4px;
+}
+.publish-status.success{background:#12351f;border-color:#22c55e;color:#dcfce7}
+.publish-status.error{background:#471818;border-color:#ef4444;color:#fee2e2}
+
+
+/* =========================================================
+   V43.2 - IMPRESSION UNIQUEMENT
+   Mercredi prolongé vers le bas.
+   Week-end placé sous le mercredi, plus bas que le début
+   des colonnes Jeudi et Vendredi.
+   Lundi, Mardi, Jeudi et Vendredi restent inchangés.
+   ========================================================= */
+@media print {
+
+  /*
+    Découpage vertical :
+    - ligne 1 : 50 %  -> Lundi / Mardi
+    - ligne 2 : 14 %  -> prolongement du Mercredi
+    - lignes 3+4 : 36 % -> Week-end
+
+    Jeudi et Vendredi commencent toujours à 50 %,
+    exactement comme avant, et occupent toute la moitié basse.
+  */
+  .poster .planning-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows:
+      minmax(0, 50fr)
+      minmax(0, 14fr)
+      minmax(0, 18fr)
+      minmax(0, 18fr) !important;
+  }
+
+  /* Lundi et Mardi : position et hauteur d'origine. */
+  .poster .planning-grid > .day-column:nth-of-type(1) {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .poster .planning-grid > .day-column:nth-of-type(2) {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+
+  /* Mercredi : descend seul plus bas. */
+  .poster .planning-grid > .day-column:nth-of-type(3) {
+    grid-column: 3 !important;
+    grid-row: 1 / span 2 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  /* Jeudi et Vendredi : commencent toujours à mi-hauteur. */
+  .poster .planning-grid > .day-column:nth-of-type(4) {
+    grid-column: 1 !important;
+    grid-row: 2 / span 3 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  .poster .planning-grid > .day-column:nth-of-type(5) {
+    grid-column: 2 !important;
+    grid-row: 2 / span 3 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  /*
+    Samedi et Dimanche restent dans la troisième colonne,
+    mais commencent plus bas que Jeudi et Vendredi.
+  */
+  .poster .planning-grid > .weekend-column {
+    grid-column: 3 !important;
+    grid-row: 3 / span 2 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    align-self: stretch !important;
+  }
+
+  /* Week-end compact, sans modifier les largeurs. */
+  .poster .weekend-column {
+    grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: .8mm !important;
+    padding: 1.1mm !important;
+  }
+
+  .poster .weekend-column > .day-column {
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: .8mm !important;
+  }
+
+  .poster .weekend-column > .day-column .day-title {
+    min-height: 5.5mm !important;
+    margin-bottom: .55mm !important;
+    padding: .7mm .8mm !important;
+    font-size: 10.5pt !important;
+  }
+
+  .poster .weekend-column .course-stack {
+    gap: .45mm !important;
+  }
+
+  .poster .weekend-column .course-card {
+    padding-top: .3mm !important;
+    padding-bottom: .3mm !important;
+  }
+}
+
+
+
+
+/* =========================================================
+   V43.6 - IMPRESSION : TYPOGRAPHIE WEEK-END IDENTIQUE
+   AUX AUTRES JOURS, SANS MODIFIER LES HAUTEURS VALIDÉES
+   ========================================================= */
+@media print {
+
+  /* Aucune réduction globale du contenu du week-end. */
+  .poster .weekend-column,
+  .poster .weekend-column > .day-column,
+  .poster .weekend-column .course-stack,
+  .poster .weekend-column .course-card,
+  .poster .weekend-column .course-topline,
+  .poster .weekend-column .course-name,
+  .poster .weekend-column .course-time {
+    transform: none !important;
+    zoom: 1 !important;
+    scale: 1 !important;
+  }
+
+  /*
+   * Taille réellement utilisée sur les cartes normales de l'affiche.
+   * Elle écrase les anciennes valeurs 9.7pt, 9.3pt et 8.7pt.
+   */
+  .poster .weekend-column .course-name,
+  .poster .weekend-column .course-name.long-name,
+  .poster .weekend-column > .weekend-samedi .course-name,
+  .poster .weekend-column > .weekend-samedi .course-name.long-name,
+  .poster .weekend-column > .weekend-dimanche .course-name,
+  .poster .weekend-column > .weekend-dimanche .course-name.long-name,
+  .poster .weekend-column .day-column[class*="count-"] .course-name,
+  .poster .weekend-column .day-column[class*="count-"] .course-name.long-name {
+    font-size: 17.5pt !important;
+    line-height: .94 !important;
+    font-weight: 950 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  /* Horaires à la même taille que les autres cartes. */
+  .poster .weekend-column .course-time,
+  .poster .weekend-column > .weekend-samedi .course-time,
+  .poster .weekend-column > .weekend-dimanche .course-time,
+  .poster .weekend-column .day-column[class*="count-"] .course-time {
+    font-size: 11.8pt !important;
+    line-height: 1 !important;
+    font-weight: 950 !important;
+  }
+
+  /* Icône et intensité remises à la taille normale. */
+  .poster .weekend-column .place-icon,
+  .poster .weekend-column .day-column[class*="count-"] .place-icon {
+    font-size: 15.5pt !important;
+  }
+
+  .poster .weekend-column .course-intensity,
+  .poster .weekend-column .day-column[class*="count-"] .course-intensity {
+    font-size: 13.2pt !important;
+    line-height: 1 !important;
+  }
+
+  /*
+   * Conservation stricte de la répartition validée :
+   * samedi plus haut, dimanche compact.
+   */
+  .poster .weekend-column {
+    grid-template-rows: auto minmax(0, 2.6fr) minmax(0, 1fr) !important;
+  }
+
+  .poster .weekend-column > .weekend-samedi .course-card,
+  .poster .weekend-column > .weekend-dimanche .course-card {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+}
+
+
+
+/* =========================================================
+   V43.7 - IMPRESSION ARTS MARTIAUX CORRIGÉE
+   Le clone d'impression porte la classe .print-poster-martial.
+   On supprime donc le dimanche sur CE clone uniquement.
+   Le planning Fitness reste inchangé.
+   ========================================================= */
+@media print {
+
+  /* Suppression réelle du dimanche sur la feuille Arts martiaux. */
+  .print-poster-martial .weekend-column > .weekend-dimanche {
+    display: none !important;
+  }
+
+  /* Le bloc Week-end ne garde que son titre et le samedi. */
+  .print-poster-martial .weekend-column {
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    gap: .8mm !important;
+  }
+
+  /* Le samedi occupe toute la hauteur libérée. */
+  .print-poster-martial .weekend-column > .weekend-samedi {
+    grid-row: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  .print-poster-martial .weekend-column > .weekend-samedi .course-stack {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .8mm !important;
+    justify-content: stretch !important;
+  }
+
+  .print-poster-martial .weekend-column > .weekend-samedi .course-card {
+    flex: 1 1 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding-top: .55mm !important;
+    padding-bottom: .55mm !important;
+  }
+
+  /* Même taille d'écriture que les autres jours. */
+  .print-poster-martial .weekend-column > .weekend-samedi .course-name,
+  .print-poster-martial .weekend-column > .weekend-samedi .course-name.long-name,
+  .print-poster-martial .weekend-column > .weekend-samedi.day-column[class*="count-"] .course-name,
+  .print-poster-martial .weekend-column > .weekend-samedi.day-column[class*="count-"] .course-name.long-name {
+    font-size: 17.5pt !important;
+    line-height: .94 !important;
+    font-weight: 950 !important;
+  }
+
+  .print-poster-martial .weekend-column > .weekend-samedi .course-time,
+  .print-poster-martial .weekend-column > .weekend-samedi.day-column[class*="count-"] .course-time {
+    font-size: 11.8pt !important;
+    line-height: 1 !important;
+    font-weight: 950 !important;
+  }
+
+  .print-poster-martial .weekend-column > .weekend-samedi .place-icon {
+    font-size: 15.5pt !important;
+  }
+
+  .print-poster-martial .weekend-column > .weekend-samedi .course-intensity {
+    font-size: 13.2pt !important;
+  }
+}
+
+
+/* =========================================================
+   V44.0 - INTERVENANTS MULTIPLES
+   ========================================================= */
+.settings-checkbox{
+  display:flex!important;align-items:center!important;gap:9px!important;
+  margin:14px 0 12px!important;padding:10px!important;
+  border:1px solid rgba(255,255,255,.16)!important;border-radius:10px!important;
+  background:#0f172a!important;color:#fff!important;font-size:12px!important;font-weight:900!important;
+}
+.settings-checkbox input{width:auto!important;margin:0!important}
+.coach-multiselect{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:6px}
+.coach-choice{
+  display:flex!important;align-items:center!important;gap:7px!important;margin:0!important;padding:8px!important;
+  border:1px solid rgba(255,255,255,.15);border-radius:9px;background:#111c31;color:#fff!important;
+  font-size:12px!important;cursor:pointer
+}
+.coach-choice input{width:auto!important;margin:0!important}
+.course-coaches{width:100%;margin-top:.25mm;font-size:8.5pt;line-height:1;font-weight:900;text-align:center;white-space:normal;overflow:hidden}
+.details-coach-help{margin:12px 0;padding:10px;border-radius:10px;background:#eef6ff;color:#1e3a5f;font-size:13px;line-height:1.35}
+@media print{
+  .course-coaches{display:none!important}
+  .poster.show-print-coaches .course-coaches{display:block!important;font-size:5.4pt!important;line-height:1!important;margin-top:.2mm!important}
+}
+
+
+/* =========================================================
+   V44.1 - SIDEBAR STABLE ET PUBLICATION TOUJOURS VISIBLE
+   Écran PC uniquement. L'impression reste inchangée.
+   ========================================================= */
+@media screen {
+  .app {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .sidebar {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .sidebar > h1,
+  .sidebar > h2,
+  .sidebar > .planning-switcher,
+  .sidebar > .btn,
+  .sidebar > .publish-status,
+  .sidebar > .settings-panel {
+    flex: 0 0 auto !important;
+  }
+
+  #course-list {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 4px !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  #course-list::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  #course-list::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, .55);
+    border-radius: 999px;
+  }
+
+  #course-list::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, .4);
+    border-radius: 999px;
+  }
+
+  .preview {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+  }
+}
