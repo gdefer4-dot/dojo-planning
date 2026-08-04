@@ -1,10 +1,10 @@
 
-/* V41.1 : purge unique des anciens caches et anciens service workers */
+/* V42.0 : purge unique des anciens caches et anciens service workers */
 (async function purgeAnciennePWA(){
   try{
-    const dejaFait = sessionStorage.getItem("dojo-pwa-purge-411");
+    const dejaFait = sessionStorage.getItem("dojo-pwa-purge-420");
     if(dejaFait) return;
-    sessionStorage.setItem("dojo-pwa-purge-411","1");
+    sessionStorage.setItem("dojo-pwa-purge-420","1");
     if("serviceWorker" in navigator){
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(reg => reg.unregister()));
@@ -19,7 +19,7 @@
 })();
 
 'use strict';
-const APP_VERSION='V41.1';
+const APP_VERSION="V43.0";
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
@@ -100,8 +100,76 @@ window.addEventListener("load", () => {
   }
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js?v=4110")
+    navigator.serviceWorker.register("./service-worker.js?v=4200")
       .then(registration => registration.update())
       .catch(error => console.warn("Service worker non enregistré :", error));
   }
+});
+
+
+/* ===== V43.0 : mise à jour automatique de la PWA ===== */
+const VERSION_ENDPOINT = "./version.json";
+const VERSION_STORAGE_KEY = "dojo-planning-version";
+
+async function lireVersionServeur() {
+  const reponse = await fetch(`${VERSION_ENDPOINT}?t=${Date.now()}`, {
+    cache: "no-store",
+    headers: { "Cache-Control": "no-cache" }
+  });
+  if (!reponse.ok) throw new Error(`Version serveur inaccessible (${reponse.status})`);
+  return reponse.json();
+}
+
+async function nettoyerCachesObsoletes(cacheActif) {
+  if (!("caches" in window)) return;
+  const noms = await caches.keys();
+  await Promise.all(noms.filter(nom => nom !== cacheActif).map(nom => caches.delete(nom)));
+}
+
+async function verifierMiseAJourPWA() {
+  try {
+    const versionServeur = await lireVersionServeur();
+    const versionLocale = localStorage.getItem(VERSION_STORAGE_KEY);
+
+    if ("serviceWorker" in navigator) {
+      const enregistrement = await navigator.serviceWorker.register(
+        `./service-worker.js?v=${versionServeur.build}`,
+        { scope: "./", updateViaCache: "none" }
+      );
+      await enregistrement.update();
+      if (enregistrement.waiting) {
+        enregistrement.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
+    }
+
+    await nettoyerCachesObsoletes(versionServeur.cacheName);
+
+    if (!versionLocale) {
+      localStorage.setItem(VERSION_STORAGE_KEY, versionServeur.version);
+      return;
+    }
+
+    if (versionLocale !== versionServeur.version) {
+      localStorage.setItem(VERSION_STORAGE_KEY, versionServeur.version);
+      const url = new URL(window.location.href);
+      url.searchParams.set("v", versionServeur.build);
+      window.location.replace(url.toString());
+    }
+  } catch (erreur) {
+    console.warn("Vérification de mise à jour PWA impossible :", erreur);
+  }
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (sessionStorage.getItem("dojo-pwa-reload")) return;
+    sessionStorage.setItem("dojo-pwa-reload", "1");
+    window.location.reload();
+  });
+}
+
+window.addEventListener("load", verifierMiseAJourPWA);
+window.addEventListener("pageshow", verifierMiseAJourPWA);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") verifierMiseAJourPWA();
 });

@@ -1,20 +1,26 @@
-const CACHE_NAME = "planning-dojo-club-v42-1";
+const VERSION = "V43.0.1";
+const CACHE_NAME = "planning-dojo-club-v43-1";
 const APP_SHELL = [
   "./",
-  "./index.html?v=420",
-  "./app.css?v=420",
-  "./app.js?v=420",
-  "./mobile-data.js?v=4201",
-  "./manifest.webmanifest?v=420",
-  "./apple-touch-icon.png?v=420",
-  "./icon-192.png?v=420",
-  "./icon-512.png?v=420",
-  "./icon-maskable-512.png?v=420"
+  "./index.html",
+  "./app.css",
+  "./app.js",
+  "./mobile-data.js",
+  "./manifest.webmanifest",
+  "./version.json",
+  "./apple-touch-icon.png",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./icon-maskable-512.png"
 ];
 
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.all(APP_SHELL.map(url =>
+        cache.add(new Request(url, { cache: "reload" })).catch(() => null)
+      ))
+    )
   );
   self.skipWaiting();
 });
@@ -28,29 +34,41 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
+self.addEventListener("message", event => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
+});
+
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
 
-  if (event.request.mode === "navigate") {
+  if (
+    event.request.mode === "navigate" ||
+    url.pathname.endsWith("/version.json") ||
+    url.pathname.endsWith("/mobile-data.js") ||
+    url.pathname.endsWith("/app.js") ||
+    url.pathname.endsWith("/service-worker.js")
+  ) {
     event.respondWith(
       fetch(event.request, { cache: "no-store" })
         .then(response => {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put("./index.html?v=420", copy));
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
           return response;
         })
-        .catch(() => caches.match("./index.html?v=420"))
+        .catch(() => caches.match(event.request))
     );
     return;
   }
 
   event.respondWith(
-    fetch(event.request, { cache: "no-store" })
-      .then(response => {
+    caches.match(event.request).then(cached =>
+      cached || fetch(event.request).then(response => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request))
+    )
   );
 });
