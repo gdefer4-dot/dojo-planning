@@ -1,5 +1,5 @@
 'use strict';
-const APP_VERSION='V45.0';
+const APP_VERSION='V45.1';
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
@@ -81,7 +81,7 @@ window.addEventListener("load", () => {
   }
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js?v=4500")
+    navigator.serviceWorker.register("./service-worker.js?v=4510")
       .then(registration => registration.update())
       .catch(error => console.warn("Service worker non enregistré :", error));
   }
