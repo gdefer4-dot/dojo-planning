@@ -40,3 +40,19 @@
 .app-splash span{margin-top:7px;color:#cbd5e1;font-weight:850}
 
 /* V40 architecture séparée */
+
+/* V44.0 - intervenants */
+.course .coaches{display:block;width:100%;margin-top:5px;font-size:13px;line-height:1.15;font-weight:850;text-align:center;opacity:.88}
+
+
+/* V44.2 - intervenants visibles sur les cartes mobiles */
+.course .coaches{
+  display:block!important;
+  width:100%!important;
+  margin:8px 0 2px!important;
+  font-size:16px!important;
+  line-height:1.15!important;
+  font-weight:900!important;
+  text-align:center!important;
+  color:#27364a!important;
+}
