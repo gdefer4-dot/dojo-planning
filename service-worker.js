@@ -1,10 +1,5 @@
-<<<<<<< Updated upstream
-const VERSION = "V45.2.8";
-const CACHE_NAME = "planning-dojo-club-v45-2-8";
-=======
-const VERSION = "V45.2.0";
-const CACHE_NAME = "planning-dojo-club-v45-2-0";
->>>>>>> Stashed changes
+const VERSION = "V45.3.9";
+const CACHE_NAME = "planning-dojo-club-v45-3-9";
 const APP_SHELL = [
   "./",
   "./index.html",

@@ -1,9 +1,5 @@
 'use strict';
-<<<<<<< Updated upstream
-const APP_VERSION='V45.1';
-=======
-const APP_VERSION='V45.2';
->>>>>>> Stashed changes
+const APP_VERSION='V45.3.0';
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
@@ -85,11 +81,7 @@ window.addEventListener("load", () => {
   }
 
   if ("serviceWorker" in navigator) {
-<<<<<<< Updated upstream
-    navigator.serviceWorker.register("./service-worker.js?v=4510")
-      .then(registration => registration.update())
-=======
-    navigator.serviceWorker.register("./service-worker.js?v=4520")
+    navigator.serviceWorker.register("./service-worker.js?v=4530")
       .then(async registration => {
         await registration.update();
         registration.addEventListener("updatefound", () => {
@@ -102,7 +94,6 @@ window.addEventListener("load", () => {
           });
         });
       })
->>>>>>> Stashed changes
       .catch(error => console.warn("Service worker non enregistré :", error));
 
     navigator.serviceWorker.addEventListener("controllerchange", () => {
