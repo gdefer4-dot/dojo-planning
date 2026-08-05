@@ -7,21 +7,13 @@
 <title>Planning mobile du Dojo Club de Vieux-Condé</title>
 
 
-<<<<<<< Updated upstream
-<link rel="stylesheet" href="app.css?v=4550">
-=======
-<link rel="stylesheet" href="app.css?v=4560">
->>>>>>> Stashed changes
+<link rel="stylesheet" href="app.css?v=4570">
 </head>
 <body>
 <section id="home" class="home"><div class="home-card"><div class="home-top"><div id="homeLogo"></div><h1>📅 Plannings 2026-2027</h1><p>Dojo Club de Vieux-Condé</p></div><div class="choices"><button type="button" class="choice choice-fitness" data-open="fitness">🏋️ Fitness &amp; Bien-être</button><button type="button" class="choice choice-martial" data-open="martial">🥋 Arts martiaux &amp; disciplines associées</button></div></div></section>
 <section id="view" class="view"><div class="toolbar"><button type="button" id="backButton">← Retour</button></div><main id="planning" class="mobile-planning"></main></section>
 <div id="sheetOverlay" class="sheet-overlay" aria-hidden="true"><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="sheet-grip"></div><div id="sheetHero" class="sheet-hero"><div id="sheetIcon" class="sheet-icon"></div><h2 id="sheetTitle"></h2><div id="sheetKicker" class="sheet-kicker"></div></div><div class="sheet-body"><div id="sheetQuick" class="quick-grid"></div><div id="sheetDescription" class="description-card"></div><div id="sheetTimes" class="all-times"></div><button type="button" id="closeSheet" class="sheet-close">Fermer</button></div></section></div>
-<<<<<<< Updated upstream
-<div class="version-badge">V45.6.12 PWA</div>
-=======
-<div class="version-badge">V45.6.12 PWA</div>
->>>>>>> Stashed changes
+<div class="version-badge">V45.7.13 PWA</div>
 
 
 
@@ -29,7 +21,7 @@
 
 <script>
 (async function synchroniserVersionMobile(){
-  const badge = document.querySelector(".version");
+  const badge = document.querySelector(".version-badge");
   try {
     const reponse = await fetch("./version.json?ts=" + Date.now(), { cache: "no-store" });
     if (!reponse.ok) throw new Error("version.json indisponible");
@@ -54,12 +46,9 @@
 })();
 </script>
 
-<<<<<<< Updated upstream
-<script src="mobile-data.js?v=45612"></script>
-<script src="app.js?v=45612"></script>
-=======
-<script src="mobile-data.js?v=45612"></script>
-<script src="app.js?v=45612"></script>
->>>>>>> Stashed changes
+
+
+<script src="mobile-data.js?v=45713"></script>
+<script src="app.js?v=45713"></script>
 </body>
 </html>

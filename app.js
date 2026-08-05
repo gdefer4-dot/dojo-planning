@@ -1,9 +1,5 @@
 'use strict';
-<<<<<<< Updated upstream
-const APP_VERSION='V45.5.0';
-=======
-const APP_VERSION='V45.6.0';
->>>>>>> Stashed changes
+const APP_VERSION='V45.7.0';
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
@@ -16,54 +12,6 @@ function ouvrirFiche(type,index){var d=DONNEES[type];if(!d)return;var c=d.cours[
 function fermerFiche(){document.getElementById('sheetOverlay').classList.remove('open');document.getElementById('sheetOverlay').setAttribute('aria-hidden','true');document.body.style.overflow='';}
 function rendre(type){var d=DONNEES[type];if(!d)return;var activites={};(d.activites||[]).forEach(function(a){activites[a.nom]=a;});var salles={};(d.salles||[]).forEach(function(s){salles[s.nom]=s;});var logo=d.logo?'<img class="brand-logo" src="'+d.logo+'" alt="Logo du Dojo">':'<div class="brand-logo brand-placeholder">🥋</div>';var html='<header class="mobile-header"><div class="brand-row">'+logo+'<div class="brand-title"><h1>'+echapper(d.titre)+'</h1><h2>'+echapper(d.sousTitre)+'</h2><span class="season">SAISON 2026-2027</span></div></div></header>';html+='<section class="muscu-hours"><h3>🏋️ ESPACE MUSCULATION</h3><div class="subtitle">Horaires d’ouverture</div><div class="muscu-grid"><div class="muscu-line"><div class="muscu-day">Lundi</div><div class="muscu-time">13h45 à 20h45</div></div><div class="muscu-line"><div class="muscu-day">Mardi et jeudi</div><div class="muscu-time">08h30 à 20h45</div></div><div class="muscu-line"><div class="muscu-day">Mercredi et vendredi</div><div class="muscu-time">08h30 à 12h00<br>13h45 à 20h45</div></div><div class="muscu-line"><div class="muscu-day">Samedi</div><div class="muscu-time">08h30 à 12h00<br>13h45 à 16h30</div></div><div class="muscu-line"><div class="muscu-day">Dimanche</div><div class="muscu-time">09h00 à 12h00</div></div></div><div class="muscu-access">Accès libre pendant les horaires d’ouverture.</div></section>';JOURS.forEach(function(jour){var liste=[];(d.cours||[]).forEach(function(c,index){if(c.jour===jour){var copie=Object.assign({},c,{__index:index});liste.push(copie);}});liste.sort(function(a,b){return a.debut.localeCompare(b.debut);});if(!liste.length)return;html+='<section class="day"><h3>'+echapper(jour.toUpperCase())+'</h3>';liste.forEach(function(c){var a=activites[c.activite]||{},salle=salles[c.salle]||{},bg=a.couleur||'#e2e8f0',fg=a.couleurTexte||'#111827',intensite='';if(type==='fitness'){var n=Number(c.intensite||a.intensite||0);intensite='<span class="intensity" aria-label="Intensité '+n+' sur 4">'+'●'.repeat(n)+'○'.repeat(Math.max(0,4-n))+'</span>';}html+='<button type="button" class="course" data-type="'+echapper(type)+'" data-index="'+c.__index+'" style="background:'+echapper(bg)+';color:'+echapper(fg)+'"><span class="time">'+echapper(c.debut)+' - '+echapper(c.fin)+'</span><span class="name">'+echapper(c.activite)+'</span>'+(coachTexte(c)?'<span class="coaches">👤 '+echapper(coachTexte(c))+'</span>':'')+'<span class="meta"><span>'+echapper(salle.icone||'📍')+'</span><span>'+echapper(c.salle)+'</span></span>'+intensite+'</button>';});html+='</section>';});html+='<div class="footer-note">Planning susceptible d’évoluer. Consultez cette page pour la dernière version.</div>';document.getElementById('planning').innerHTML=html;}
 
-<<<<<<< Updated upstream
-function initialiserInteractionsMobile() {
-  document.querySelectorAll("[data-open]").forEach(bouton => {
-    bouton.addEventListener("click", event => {
-      event.preventDefault();
-      const type = bouton.getAttribute("data-open");
-      if (type) ouvrirPlanning(type);
-    });
-  });
-
-  document.addEventListener("click", event => {
-    const cours = event.target.closest(".course");
-    if (cours) {
-      event.preventDefault();
-      ouvrirFiche(
-        cours.getAttribute("data-type"),
-        Number(cours.getAttribute("data-index"))
-      );
-      return;
-    }
-
-    if (event.target.closest("[data-back]")) {
-      event.preventDefault();
-      retourAccueil();
-      return;
-    }
-
-    if (event.target.closest("[data-close-sheet]")) {
-      event.preventDefault();
-      fermerFiche();
-    }
-  });
-
-  document.getElementById("sheetOverlay")?.addEventListener("click", event => {
-    if (event.target.id === "sheetOverlay") fermerFiche();
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") fermerFiche();
-  });
-
-  logoAccueil();
-
-  setTimeout(() => {
-    document.getElementById("appSplash")?.classList.add("hide");
-  }, 850);
-
-=======
 function elementRetour(event) {
   return event.target.closest(
     "[data-back], [data-retour], .back-button, .btn-back, .sheet-back, #backButton"
@@ -77,50 +25,62 @@ function elementFermetureFiche(event) {
 }
 
 function initialiserInteractionsMobile() {
+  const home = document.getElementById("home");
+  const view = document.getElementById("view");
+  const backButton = document.getElementById("backButton");
+  const closeSheet = document.getElementById("closeSheet");
+  const sheetOverlay = document.getElementById("sheetOverlay");
+
   document.querySelectorAll("[data-open]").forEach(bouton => {
     bouton.addEventListener("click", event => {
       event.preventDefault();
-      const type = bouton.getAttribute("data-open");
-      if (type) ouvrirPlanning(type);
+      const type = bouton.dataset.open;
+      if (type === "fitness" || type === "martial") {
+        ouvrirPlanning(type);
+      }
     });
   });
 
-  document.addEventListener("click", event => {
-    const retour = elementRetour(event);
-    if (retour) {
-      event.preventDefault();
-      const ficheOuverte = document.getElementById("sheetOverlay")?.classList.contains("open");
-      if (ficheOuverte) fermerFiche();
-      else retourAccueil();
-      return;
-    }
+  backButton?.addEventListener("click", event => {
+    event.preventDefault();
 
-    const fermeture = elementFermetureFiche(event);
-    if (fermeture) {
-      event.preventDefault();
+    if (sheetOverlay?.classList.contains("open")) {
       fermerFiche();
       return;
     }
 
+    retourAccueil();
+  });
+
+  closeSheet?.addEventListener("click", event => {
+    event.preventDefault();
+    fermerFiche();
+  });
+
+  sheetOverlay?.addEventListener("click", event => {
+    if (event.target === sheetOverlay) fermerFiche();
+  });
+
+  document.addEventListener("click", event => {
     const cours = event.target.closest(".course");
-    if (cours) {
-      event.preventDefault();
-      ouvrirFiche(
-        cours.getAttribute("data-type"),
-        Number(cours.getAttribute("data-index"))
-      );
+    if (!cours) return;
+
+    event.preventDefault();
+    const type = cours.dataset.type;
+    const index = Number(cours.dataset.index);
+
+    if ((type === "fitness" || type === "martial") && Number.isFinite(index)) {
+      ouvrirFiche(type, index);
     }
   });
 
-  document.getElementById("sheetOverlay")?.addEventListener("click", event => {
-    if (event.target.id === "sheetOverlay") fermerFiche();
-  });
-
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape") {
-      const ficheOuverte = document.getElementById("sheetOverlay")?.classList.contains("open");
-      if (ficheOuverte) fermerFiche();
-      else retourAccueil();
+    if (event.key !== "Escape") return;
+
+    if (sheetOverlay?.classList.contains("open")) {
+      fermerFiche();
+    } else if (view?.classList.contains("active")) {
+      retourAccueil();
     }
   });
 
@@ -130,24 +90,23 @@ function initialiserInteractionsMobile() {
     document.getElementById("appSplash")?.classList.add("hide");
   }, 850);
 
->>>>>>> Stashed changes
   if (typeof isStandalone === "function" && isStandalone()) {
     document.getElementById("installZone")?.classList.add("hidden");
   }
 
   if ("serviceWorker" in navigator) {
-<<<<<<< Updated upstream
-    navigator.serviceWorker.register("./service-worker.js?v=4550")
-=======
-    navigator.serviceWorker.register("./service-worker.js?v=4560")
->>>>>>> Stashed changes
+    navigator.serviceWorker.register("./service-worker.js?v=4570")
       .then(registration => registration.update())
       .catch(error => console.warn("Service worker non enregistré :", error));
   }
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initialiserInteractionsMobile, { once: true });
+  document.addEventListener(
+    "DOMContentLoaded",
+    initialiserInteractionsMobile,
+    { once: true }
+  );
 } else {
   initialiserInteractionsMobile();
 }
