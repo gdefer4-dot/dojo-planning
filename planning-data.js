@@ -18,7 +18,8 @@ const FITNESS_ACTIVITES = [
   { nom: "Stretching", duree: 45, intensite: 2, couleur: "#b9e9ff", couleurTexte: "#07111f" },
   { nom: "Pilates", duree: 45, intensite: 3, couleur: "#ffe28a", couleurTexte: "#111827" },
   { nom: "Yoga", duree: 60, intensite: 2, couleur: "#aee4ff", couleurTexte: "#07111f" },
-  { nom: "Yogalate", duree: 45, intensite: 2, couleur: "#b9e9ff", couleurTexte: "#07111f" },
+  { nom: "Yin Yoga", duree: 60, intensite: 1, couleur: "#aee4ff", couleurTexte: "#07111f" },
+  { nom: "Yogalates", duree: 45, intensite: 2, couleur: "#b9e9ff", couleurTexte: "#07111f" },
 
   { nom: "Biking", duree: 45, intensite: 4, couleur: "#ffaca6", couleurTexte: "#111827" },
   { nom: "Cardio Box", duree: 60, intensite: 4, couleur: "#ffaca6", couleurTexte: "#111827" },
@@ -36,13 +37,16 @@ const FITNESS_ACTIVITES = [
   { nom: "Body Move", duree: 45, intensite: 3, couleur: "#d8c4ff", couleurTexte: "#111827" },
   { nom: "Body Move Kids", duree: 45, intensite: 2, couleur: "#d8c4ff", couleurTexte: "#111827" },
   { nom: "Body Move Seniors", duree: 30, intensite: 2, couleur: "#d8c4ff", couleurTexte: "#111827" },
+  { nom: "Instant Papote", duree: 30, intensite: 2, couleur: "#d8c4ff", couleurTexte: "#111827" },
   { nom: "Step", duree: 45, intensite: 3, couleur: "#d8c4ff", couleurTexte: "#111827" },
   { nom: "Zumba", duree: 60, intensite: 3, couleur: "#d8c4ff", couleurTexte: "#111827" },
 
   { nom: "Gym Douce", duree: 45, intensite: 1, couleur: "#c7f3b8", couleurTexte: "#111827" },
   { nom: "Gym Bien-être", duree: 45, intensite: 1, couleur: "#c7f3b8", couleurTexte: "#111827" },
   { nom: "Gym Ball", duree: 45, intensite: 1, couleur: "#c7f3b8", couleurTexte: "#111827" },
-  { nom: "Mobilité / Bike", duree: 30, intensite: 1, couleur: "#c7f3b8", couleurTexte: "#111827" }
+  { nom: "Mobilité / Bike", duree: 30, intensite: 1, couleur: "#c7f3b8", couleurTexte: "#111827" },
+  { nom: "Yoga Vinyasa", duree: 60, intensite: 2, couleur: "#aee4ff", couleurTexte: "#07111f" },
+  { nom: "Stretching sur chaise", duree: 45, intensite: 1, couleur: "#c7f3b8", couleurTexte: "#111827" }
 ];
 
 const FITNESS_PLANNING_DEFAUT = [
@@ -84,7 +88,27 @@ const MARTIAL_ACTIVITES = [
 ];
 
 /* Planning vide au départ : les cours seront ajoutés depuis le menu. */
-const MARTIAL_PLANNING_DEFAUT = [];
+const MARTIAL_PLANNING_DEFAUT = [
+  { jour: "Lundi", debut: "19:30", fin: "20:45", activite: "PPG Arts Martiaux + de 12 ans", intensite: 4, salle: "Grand Dojo" },
+  { jour: "Lundi", debut: "18:15", fin: "19:30", activite: "Karaté technique", intensite: 2, salle: "Grand Dojo" },
+  { jour: "Mardi", debut: "18:15", fin: "19:30", activite: "Full Contact", intensite: 2, salle: "Salle Kerkhove" },
+  { jour: "Mardi", debut: "18:00", fin: "19:15", activite: "JUDO 6/12 ans", intensite: 2, salle: "Grand Dojo" },
+  { jour: "Mardi", debut: "19:15", fin: "20:45", activite: "JUDO + 12 ans", intensite: 4, salle: "Grand Dojo" },
+  { jour: "Mercredi", debut: "09:15", fin: "10:00", activite: "Éveil Kids 3/4 ans", intensite: 1, salle: "Grand Dojo" },
+  { jour: "Mercredi", debut: "10:00", fin: "10:45", activite: "Éveil Kids 15/36 mois", intensite: 1, salle: "Grand Dojo" },
+  { jour: "Mercredi", debut: "14:00", fin: "15:15", activite: "Judo 6/8 ans", intensite: 2, salle: "Grand Dojo" },
+  { jour: "Mercredi", debut: "15:15", fin: "16:00", activite: "Éveil judo 4/5 ans", intensite: 1, salle: "Grand Dojo" },
+  { jour: "Mercredi", debut: "16:00", fin: "16:45", activite: "Éveil Karaté 5/6 ans", intensite: 1, salle: "Grand Dojo" },
+  { jour: "Mercredi", debut: "16:45", fin: "18:00", activite: "Karaté 7/11 ans", intensite: 3, salle: "Grand Dojo" },
+  { jour: "Mercredi", debut: "18:15", fin: "19:30", activite: "Karaté", intensite: 3, salle: "Grand Dojo" },
+  { jour: "Jeudi", debut: "18:15", fin: "19:30", activite: "Full Contact", intensite: 4, salle: "Grand Dojo" },
+  { jour: "Jeudi", debut: "19:30", fin: "20:45", activite: "Judo Kata Technique", intensite: 2, salle: "Grand Dojo" },
+  { jour: "Vendredi", debut: "18:00", fin: "19:15", activite: "JUDO 6/12 ans", intensite: 3, salle: "Grand Dojo" },
+  { jour: "Vendredi", debut: "19:15", fin: "20:45", activite: "JUDO + 12 ans", intensite: 4, salle: "Grand Dojo" },
+  { jour: "Samedi", debut: "09:15", fin: "10:00", activite: "Éveil Kids 3/4 ans", intensite: 1, salle: "Grand Dojo" },
+  { jour: "Samedi", debut: "10:00", fin: "10:45", activite: "Éveil Kids 15/36 mois", intensite: 1, salle: "Grand Dojo" },
+  { jour: "Samedi", debut: "10:45", fin: "12:00", activite: "Judo 6/8 ans", intensite: 2, salle: "Grand Dojo" }
+];
 
 const PLANNING_CONFIGS = {
   fitness: {

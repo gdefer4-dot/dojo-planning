@@ -1,5 +1,9 @@
 'use strict';
+<<<<<<< Updated upstream
 const APP_VERSION='V45.3.0';
+=======
+const APP_VERSION='V45.4.0';
+>>>>>>> Stashed changes
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
@@ -81,7 +85,11 @@ window.addEventListener("load", () => {
   }
 
   if ("serviceWorker" in navigator) {
+<<<<<<< Updated upstream
     navigator.serviceWorker.register("./service-worker.js?v=4530")
+=======
+    navigator.serviceWorker.register("./service-worker.js?v=4540")
+>>>>>>> Stashed changes
       .then(async registration => {
         await registration.update();
         registration.addEventListener("updatefound", () => {

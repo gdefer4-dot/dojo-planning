@@ -55,10 +55,12 @@ function normaliserCoursPourPlanningActif() {
   cours = cours.map(c => {
     const copie = { ...c, intervenants: normaliserIntervenants(c.intervenants) };
 
+    /*
+     * Ne jamais remplacer silencieusement un cours enregistré.
+     * Une activité absente du catalogue est conservée telle quelle.
+     */
     if (!nomsActivites.has(copie.activite)) {
-      copie.activite = ACTIVITES[0].nom;
-      copie.intensite = ACTIVITES[0].intensite;
-      modifie = true;
+      console.warn("Activité conservée hors catalogue :", copie.activite);
     }
 
     if (!nomsSalles.has(copie.salle)) {
@@ -102,6 +104,69 @@ function normaliserCoursPourPlanningActif() {
 
   if (modifie) localStorage.setItem(STORAGE_KEY, JSON.stringify(cours));
   localStorage.setItem(cleMigration, "1");
+})();
+
+
+/* V45.4 : restauration des cours supprimés par l'ancien normaliseur. */
+(function restaurerCoursV454() {
+  const cle = "dojo-restauration-cours-v454";
+  if (localStorage.getItem(cle)) return;
+
+  function lire(cleStockage) {
+    try {
+      const valeur = JSON.parse(localStorage.getItem(cleStockage));
+      return Array.isArray(valeur) ? valeur : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  const fitnessKey = PLANNING_CONFIGS.fitness.storageKey;
+  const martialKey = PLANNING_CONFIGS.martial.storageKey;
+
+  let fitness = lire(fitnessKey);
+  let martial = lire(martialKey);
+
+  fitness = fitness.map(c => {
+    if (
+      c.jour === "Mercredi" &&
+      c.debut === "10:30" &&
+      (c.fin === "11:00" || c.fin === "11:15") &&
+      c.activite === "Stretching"
+    ) {
+      return {
+        ...c,
+        fin: "11:00",
+        activite: "Instant Papote",
+        intensite: 1,
+        salle: "Espace Convivialité"
+      };
+    }
+
+    if (
+      c.jour === "Vendredi" &&
+      c.debut === "17:15" &&
+      c.fin === "18:00" &&
+      (c.activite === "Yogalate" || c.activite === "Stretching")
+    ) {
+      return {
+        ...c,
+        activite: "Yogalates",
+        intensite: 2,
+        salle: "Petit Dojo"
+      };
+    }
+
+    return c;
+  });
+
+  if (martial.length === 0) {
+    martial = structuredClone(PLANNING_CONFIGS.martial.planningDefaut);
+  }
+
+  localStorage.setItem(fitnessKey, JSON.stringify(fitness));
+  localStorage.setItem(martialKey, JSON.stringify(martial));
+  localStorage.setItem(cle, "1");
 })();
 
 function chargerPlanning(type) {
@@ -183,6 +248,10 @@ for (let h = 8; h <= 21; h++) {
 }
 
 function sauvegarder() {
+  const ancienneValeur = localStorage.getItem(STORAGE_KEY);
+  if (ancienneValeur) {
+    localStorage.setItem(`${STORAGE_KEY}-sauvegarde-auto`, ancienneValeur);
+  }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cours));
 }
 
