@@ -9,7 +9,7 @@ const { execFile } = require("child_process");
 
 const ROOT = __dirname;
 const PORT = 4172;
-const VERSION_URL = "https://gdefer4-dot.github.io/dojo-planning/version.json";
+const VERSION_URL = "https://dojo-planning-v2.pages.dev/version.json";
 
 function run(command, args, cwd = ROOT) {
   return new Promise((resolve, reject) => {
@@ -214,7 +214,7 @@ async function publish(payload) {
    * --force-with-lease évite d'écraser une modification distante inconnue.
    */
   await run("git", ["fetch", "origin", "main"]);
-  await run("git", ["push", "--force-with-lease", "origin", "HEAD:main"]);
+  await run("git", ["push", "origin", "main"]);
 
   const online = await verifierVersionEnLigne(visibleVersion, 1);
 
