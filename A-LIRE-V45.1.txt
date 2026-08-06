@@ -1,0 +1,19 @@
+V45.1 - PUBLICATION GIT SYNCHRONISÉE
+
+Correction principale :
+- récupération automatique des nouveautés GitHub avant chaque publication ;
+- pull --rebase --autostash avant la génération des fichiers mobiles ;
+- nouvelle tentative automatique si GitHub change entre le pull et le push ;
+- annulation propre d'un rebase en cas de conflit ;
+- aucun écrasement forcé de l'historique GitHub.
+
+Installation :
+1. Fermer Dojo Manager.
+2. Copier tous les fichiers de ce ZIP dans le dossier FRONTEND actuel.
+3. Accepter le remplacement.
+4. Ne pas supprimer le dossier caché .git.
+5. Relancer DEMARRER-DOJO-MANAGER.bat.
+6. Cliquer sur Publier sur le mobile.
+
+Le serveur synchronise désormais automatiquement le dépôt local avec origin/main
+avant de créer et publier la nouvelle version mobile.

@@ -1,0 +1,21 @@
+V45.2 - VERSION ET CACHE MOBILE CORRIGÉS
+
+Corrections :
+- badge mobile alimenté par version.json ;
+- suppression de la version V33.13 codée en dur ;
+- rechargement automatique lorsqu'une nouvelle version est publiée ;
+- mise à jour forcée du Service Worker ;
+- stratégie réseau prioritaire pour index.html, mobile-data.js, app.js,
+  app.css, version.json et service-worker.js ;
+- synchronisation GitHub avant publication ;
+- publication complète des fichiers mobiles ;
+- suppression de l'ancien dossier mobile en double.
+
+Installation :
+1. Fermer Dojo Manager.
+2. Copier le contenu du dossier FRONTEND de ce ZIP dans le dossier FRONTEND actuel.
+3. Accepter le remplacement.
+4. Ne pas supprimer le dossier caché .git.
+5. Relancer DEMARRER-DOJO-MANAGER.bat.
+6. Cliquer sur Publier sur le mobile.
+7. Sur l'iPhone, fermer complètement Safari et l'application installée, puis rouvrir.

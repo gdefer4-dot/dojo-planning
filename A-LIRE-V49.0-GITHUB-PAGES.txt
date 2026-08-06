@@ -1,0 +1,24 @@
+V49.0 - DÉPLOIEMENT GITHUB PAGES CORRIGÉ
+
+PROBLÈME IDENTIFIÉ
+L'ancien système « Déployer à partir d'une branche » utilise pages-build-deployment.
+Les déploiements restent en état deployment_queued puis expirent après environ 10 minutes.
+
+CORRECTION INTÉGRÉE
+- workflow .github/workflows/pages.yml ;
+- déploiement avec actions/deploy-pages ;
+- un seul déploiement Pages à la fois ;
+- tout ancien déploiement en attente est annulé lorsqu'une nouvelle version arrive ;
+- fichier .nojekyll ;
+- publication locale et données du planning inchangées.
+
+ÉTAPE GITHUB OBLIGATOIRE, UNE SEULE FOIS
+1. Ouvrir le dépôt GitHub.
+2. Paramètres / Settings.
+3. Pages.
+4. Dans « Build and deployment », choisir :
+   Source : GitHub Actions
+5. Revenir dans Dojo Manager et cliquer une seule fois sur « Publier sur le mobile ».
+
+Ne plus choisir « Déployer à partir d'une branche », sinon GitHub relancera
+l'ancien pages-build-deployment qui reste bloqué en file d'attente.

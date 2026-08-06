@@ -1,0 +1,23 @@
+V45.2.9 - RÉPARATION MOBILE
+
+Cause trouvée :
+app.js, index.html et service-worker.js contenaient des marqueurs de conflit Git.
+Le HTML s'affichait, mais JavaScript s'arrêtait immédiatement.
+
+Corrections :
+- suppression des conflits Git ;
+- boutons Fitness et Arts martiaux réactivés ;
+- un seul chargement de app.js et mobile-data.js ;
+- nouveau cache V45.2.9 ;
+- coachs et Circuit Training ADO conservés ;
+- publication GitHub réparée.
+
+Installation :
+1. Fermer Dojo Manager.
+2. Copier le contenu du dossier FRONTEND du ZIP dans le dossier FRONTEND actuel.
+3. Accepter tous les remplacements.
+4. Ne pas supprimer le dossier caché .git.
+5. Lancer DEMARRER-DOJO-MANAGER.bat.
+6. Cliquer sur Publier sur le mobile.
+7. Actualiser Safari.
+8. Fermer complètement l'application installée puis la rouvrir.

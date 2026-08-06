@@ -1,0 +1,33 @@
+V45.0 - ARCHITECTURE PROPRE
+
+Cette version conserve une seule application à la racine du dossier FRONTEND.
+
+Supprimés :
+- ancien dossier mobile en double ;
+- anciennes notices V32 à V44 ;
+- anciennes copies de l'application ;
+- fichiers obsolètes qui ne participaient plus au fonctionnement.
+
+Conservés :
+- planning PC ;
+- impression Fitness et Arts martiaux ;
+- publication GitHub automatique ;
+- application mobile PWA ;
+- intervenants multiples ;
+- Circuit Training ADO 12-16 ans ;
+- dépôt Git existant dans ton dossier FRONTEND.
+
+INSTALLATION
+1. Ferme Dojo Manager.
+2. Fais une copie de sécurité de ton dossier FRONTEND actuel.
+3. Copie tous les fichiers de ce ZIP dans le dossier FRONTEND existant.
+4. Accepte le remplacement.
+5. Ne supprime surtout pas le dossier caché .git.
+6. Lance NETTOYER-ANCIENNE-ARCHITECTURE.bat.
+7. Lance DEMARRER-DOJO-MANAGER.bat.
+8. Vérifie Circuit Training ADO et les intervenants.
+9. Clique sur Publier sur le mobile.
+10. Ferme complètement l'application iPhone puis rouvre-la.
+
+Le site mobile utilise désormais uniquement :
+index.html + app.js + app.css + mobile-data.js + service-worker.js

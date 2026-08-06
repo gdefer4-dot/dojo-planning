@@ -1,0 +1,12 @@
+V45.6 - BOUTON RETOUR DE LA FICHE CORRIGÉ
+
+- le bouton Retour ferme la fiche ouverte ;
+- s'il n'y a pas de fiche ouverte, il revient à l'accueil ;
+- aucun changement sur les cours, les coachs, l'impression ou la publication.
+
+Installation :
+1. Copier le contenu du dossier FRONTEND dans le dossier FRONTEND actuel.
+2. Accepter les remplacements.
+3. Relancer DEMARRER-DOJO-MANAGER.bat.
+4. Publier sur le mobile.
+5. Fermer complètement l'application mobile puis la rouvrir.

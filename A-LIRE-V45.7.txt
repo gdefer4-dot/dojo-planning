@@ -1,0 +1,27 @@
+V45.7 - APPLICATION MOBILE STABILISÉE
+
+Cause exacte :
+des marqueurs de conflit Git étaient encore présents dans index.html,
+app.js et service-worker.js. Safari chargeait alors une page visible,
+mais le JavaScript ne pouvait pas s'exécuter.
+
+Corrections :
+- suppression de tous les conflits Git dans les fichiers actifs ;
+- boutons Fitness et Arts martiaux reliés directement ;
+- bouton Retour relié directement à #backButton ;
+- bouton Fermer relié directement à #closeSheet ;
+- ouverture des fiches de cours conservée ;
+- un seul chargement de mobile-data.js et app.js ;
+- sélecteur du numéro de version corrigé ;
+- nouveau cache V45.7.0 ;
+- cours, coachs, Instant Papote, Yogalates, Circuit Training ADO,
+  impressions et publication conservés.
+
+Installation :
+1. Fermer Dojo Manager.
+2. Copier le contenu du dossier FRONTEND du ZIP dans le dossier FRONTEND actuel.
+3. Accepter tous les remplacements.
+4. Ne pas supprimer le dossier caché .git.
+5. Relancer DEMARRER-DOJO-MANAGER.bat.
+6. Publier sur le mobile.
+7. Fermer complètement Safari et l'application installée, puis rouvrir.

@@ -84,7 +84,9 @@ const MARTIAL_ACTIVITES = [
 
   { nom: "Karaté 7/11 ans", duree: 60, intensite: 3, couleur: "#ffe08a", couleurTexte: "#3b2900" },
   { nom: "Karaté", duree: 60, intensite: 3, couleur: "#ffc86b", couleurTexte: "#3b2000" },
-  { nom: "Karaté technique", duree: 60, intensite: 2, couleur: "#ffb85c", couleurTexte: "#3b2000" }
+  { nom: "Karaté technique", duree: 60, intensite: 2, couleur: "#ffb85c", couleurTexte: "#3b2000" },
+  { nom: "Karaté 6 ans et +", duree: 60, intensite: 2, couleur: "#ffb347", couleurTexte: "#111827" },
+  { nom: "Karaté + de 12 ans", duree: 60, intensite: 3, couleur: "#ffb347", couleurTexte: "#111827" }
 ];
 
 /* Planning vide au départ : les cours seront ajoutés depuis le menu. */

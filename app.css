@@ -43,3 +43,19 @@
 
 /* V44.0 - intervenants */
 .course .coaches{display:block;width:100%;margin-top:5px;font-size:13px;line-height:1.15;font-weight:850;text-align:center;opacity:.88}
+
+
+.repair-link {
+  width: min(680px, calc(100% - 40px));
+  margin: 14px auto 0;
+  text-align: center;
+}
+.repair-link a {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.92);
+  color: #0f172a;
+  font-weight: 800;
+  text-decoration: none;
+}

@@ -4,7 +4,7 @@
   "short_name": "Planning Dojo",
   "description": "Planning officiel du Dojo Club de Vieux-Condé.",
   "lang": "fr-FR",
-  "start_url": "./?app=v420",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",

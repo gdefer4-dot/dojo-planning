@@ -1,0 +1,24 @@
+V45.4 - COURS RESTAURÉS ET PROTÉGÉS
+
+Cause identifiée :
+l'ancien normaliseur remplaçait toute activité absente du catalogue par
+« Stretching ». Cela a touché Instant Papote, Yogalates et d'autres cours.
+Le planning Arts martiaux avait aussi été enregistré vide.
+
+Corrections :
+- restauration de Instant Papote le mercredi à 10h30 ;
+- restauration de Yogalates avec le S le vendredi à 17h15 ;
+- restauration du dernier planning Arts martiaux complet connu si le planning est vide ;
+- retour de Instant Papote et Yogalates dans le catalogue ;
+- aucune activité inconnue ne sera désormais remplacée par Stretching ;
+- sauvegarde automatique avant chaque modification ;
+- Circuit Training ADO et les intervenants sont conservés.
+
+Installation :
+1. Fermer Dojo Manager.
+2. Copier le contenu du dossier FRONTEND dans le dossier FRONTEND actuel.
+3. Accepter tous les remplacements.
+4. Ne pas supprimer le dossier caché .git.
+5. Relancer DEMARRER-DOJO-MANAGER.bat.
+6. Ouvrir Fitness puis Arts martiaux pour déclencher la restauration.
+7. Vérifier les cours avant de publier sur le mobile.

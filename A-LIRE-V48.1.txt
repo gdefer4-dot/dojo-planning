@@ -1,0 +1,18 @@
+V48.1 - DÉBLOCAGE MOBILE
+
+Cette version ajoute une vraie procédure de sortie de l'ancien cache :
+- nouveau service worker : sw-v481.js ;
+- ancien service-worker.js transformé en nettoyeur ;
+- page autonome reparer-mobile.html ;
+- bouton « Réparer ou actualiser l'application » sur l'accueil ;
+- publication non bloquante après l'envoi GitHub.
+
+APRÈS INSTALLATION SUR LE PC
+1. Fermer Dojo Manager.
+2. Remplacer les fichiers du dossier FRONTEND.
+3. Conserver le dossier caché .git.
+4. Relancer DEMARRER-DOJO-MANAGER.bat.
+5. Publier sur le mobile.
+6. Sur le téléphone, ouvrir une fois :
+   https://gdefer4-dot.github.io/dojo-planning/reparer-mobile.html
+7. La page nettoie l'ancienne PWA puis ouvre automatiquement la nouvelle version.

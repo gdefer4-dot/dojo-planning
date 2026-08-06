@@ -1,0 +1,16 @@
+V45.3 - PUBLICATION STABLE
+
+Corrections :
+- conflits Git retirés des fichiers mobiles ;
+- récursion infinie supprimée dans publish-server.js ;
+- fin de l'erreur Maximum call stack size exceeded ;
+- push normal, puis fetch/rebase et seconde tentative uniquement si nécessaire ;
+- coachs et Circuit Training ADO conservés.
+
+Installation :
+1. Fermer Dojo Manager.
+2. Copier le contenu du dossier FRONTEND du ZIP dans le dossier FRONTEND actuel.
+3. Accepter tous les remplacements.
+4. Ne pas supprimer le dossier caché .git.
+5. Lancer DEMARRER-DOJO-MANAGER.bat.
+6. Cliquer sur Publier sur le mobile.

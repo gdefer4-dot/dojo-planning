@@ -1,5 +1,5 @@
 'use strict';
-const APP_VERSION='V45.7.0';
+const APP_VERSION='V49.0.21';
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
@@ -24,89 +24,130 @@ function elementFermetureFiche(event) {
   );
 }
 
+let invitationInstallationPWA = null;
+
+function estIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent || "");
+}
+
+function estModeInstalle() {
+  return (
+    (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+    window.navigator.standalone === true
+  );
+}
+
+function afficherEtatInstallation() {
+  const bouton = document.getElementById("installButton");
+  const aideIOS = document.getElementById("iosInstallHelp");
+  const installee = document.getElementById("installedMessage");
+  const aideNavigateur = document.getElementById("browserInstallHelp");
+
+  if (!bouton || !aideIOS || !installee || !aideNavigateur) return;
+
+  bouton.hidden = true;
+  aideIOS.hidden = true;
+  installee.hidden = true;
+  aideNavigateur.hidden = true;
+
+  if (estModeInstalle()) installee.hidden = false;
+  else if (estIOS()) aideIOS.hidden = false;
+  else if (invitationInstallationPWA) bouton.hidden = false;
+  else aideNavigateur.hidden = false;
+}
+
 function initialiserInteractionsMobile() {
-  const home = document.getElementById("home");
-  const view = document.getElementById("view");
+  document.querySelectorAll("[data-open]").forEach(bouton => {
+    bouton.onclick = event => {
+      event.preventDefault();
+      const type = bouton.getAttribute("data-open");
+      if (type === "fitness" || type === "martial") ouvrirPlanning(type);
+    };
+  });
+
   const backButton = document.getElementById("backButton");
   const closeSheet = document.getElementById("closeSheet");
   const sheetOverlay = document.getElementById("sheetOverlay");
+  const view = document.getElementById("view");
 
-  document.querySelectorAll("[data-open]").forEach(bouton => {
-    bouton.addEventListener("click", event => {
+  if (backButton) {
+    backButton.onclick = event => {
       event.preventDefault();
-      const type = bouton.dataset.open;
-      if (type === "fitness" || type === "martial") {
-        ouvrirPlanning(type);
-      }
-    });
-  });
+      if (sheetOverlay && sheetOverlay.classList.contains("open")) fermerFiche();
+      else retourAccueil();
+    };
+  }
 
-  backButton?.addEventListener("click", event => {
-    event.preventDefault();
-
-    if (sheetOverlay?.classList.contains("open")) {
+  if (closeSheet) {
+    closeSheet.onclick = event => {
+      event.preventDefault();
       fermerFiche();
-      return;
-    }
+    };
+  }
 
-    retourAccueil();
-  });
-
-  closeSheet?.addEventListener("click", event => {
-    event.preventDefault();
-    fermerFiche();
-  });
-
-  sheetOverlay?.addEventListener("click", event => {
-    if (event.target === sheetOverlay) fermerFiche();
-  });
+  if (sheetOverlay) {
+    sheetOverlay.onclick = event => {
+      if (event.target === sheetOverlay) fermerFiche();
+    };
+  }
 
   document.addEventListener("click", event => {
-    const cours = event.target.closest(".course");
+    const cours = event.target.closest ? event.target.closest(".course") : null;
     if (!cours) return;
 
     event.preventDefault();
-    const type = cours.dataset.type;
-    const index = Number(cours.dataset.index);
+    const type = cours.getAttribute("data-type");
+    const index = Number(cours.getAttribute("data-index"));
 
     if ((type === "fitness" || type === "martial") && Number.isFinite(index)) {
       ouvrirFiche(type, index);
     }
   });
 
+  const installButton = document.getElementById("installButton");
+  if (installButton) {
+    installButton.onclick = async event => {
+      event.preventDefault();
+      if (!invitationInstallationPWA) return;
+      await invitationInstallationPWA.prompt();
+      await invitationInstallationPWA.userChoice;
+      invitationInstallationPWA = null;
+      afficherEtatInstallation();
+    };
+  }
+
   document.addEventListener("keydown", event => {
     if (event.key !== "Escape") return;
-
-    if (sheetOverlay?.classList.contains("open")) {
-      fermerFiche();
-    } else if (view?.classList.contains("active")) {
-      retourAccueil();
-    }
+    if (sheetOverlay && sheetOverlay.classList.contains("open")) fermerFiche();
+    else if (view && view.classList.contains("active")) retourAccueil();
   });
 
   logoAccueil();
-
-  setTimeout(() => {
-    document.getElementById("appSplash")?.classList.add("hide");
-  }, 850);
-
-  if (typeof isStandalone === "function" && isStandalone()) {
-    document.getElementById("installZone")?.classList.add("hidden");
-  }
+  afficherEtatInstallation();
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js?v=4570")
+    navigator.serviceWorker.register(
+      "./sw-v481.js?v=4900",
+      { updateViaCache: "none" }
+    )
       .then(registration => registration.update())
       .catch(error => console.warn("Service worker non enregistré :", error));
   }
 }
 
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  invitationInstallationPWA = event;
+  afficherEtatInstallation();
+});
+
+window.addEventListener("appinstalled", () => {
+  invitationInstallationPWA = null;
+  afficherEtatInstallation();
+});
+
 if (document.readyState === "loading") {
-  document.addEventListener(
-    "DOMContentLoaded",
-    initialiserInteractionsMobile,
-    { once: true }
-  );
+  document.addEventListener("DOMContentLoaded", initialiserInteractionsMobile, { once: true });
 } else {
   initialiserInteractionsMobile();
 }

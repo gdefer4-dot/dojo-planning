@@ -7,34 +7,76 @@
 <title>Planning mobile du Dojo Club de Vieux-Condé</title>
 
 
-<link rel="stylesheet" href="app.css?v=4570">
+<link rel="stylesheet" href="app.css?v=49021">
+<link rel="manifest" href="manifest.webmanifest?v=49021">
+<link rel="apple-touch-icon" href="icône-touch-apple.png?v=4800">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Planning Dojo">
 </head>
 <body>
 <section id="home" class="home"><div class="home-card"><div class="home-top"><div id="homeLogo"></div><h1>📅 Plannings 2026-2027</h1><p>Dojo Club de Vieux-Condé</p></div><div class="choices"><button type="button" class="choice choice-fitness" data-open="fitness">🏋️ Fitness &amp; Bien-être</button><button type="button" class="choice choice-martial" data-open="martial">🥋 Arts martiaux &amp; disciplines associées</button></div></div></section>
+
+<div id="installZone" class="install-zone" aria-live="polite">
+  <button type="button" id="installButton" class="install-button" hidden>
+    📲 Installer l’application
+  </button>
+  <div id="iosInstallHelp" class="install-message" hidden>
+    📲 Sur iPhone : touchez <strong>Partager</strong>, puis
+    <strong>Sur l’écran d’accueil</strong>.
+  </div>
+  <div id="installedMessage" class="install-message install-ok" hidden>
+    ✅ Application déjà installée
+  </div>
+  <div id="browserInstallHelp" class="install-message" hidden>
+    📲 Installation disponible depuis le menu du navigateur.
+  </div>
+</div>
+
 <section id="view" class="view"><div class="toolbar"><button type="button" id="backButton">← Retour</button></div><main id="planning" class="mobile-planning"></main></section>
 <div id="sheetOverlay" class="sheet-overlay" aria-hidden="true"><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="sheet-grip"></div><div id="sheetHero" class="sheet-hero"><div id="sheetIcon" class="sheet-icon"></div><h2 id="sheetTitle"></h2><div id="sheetKicker" class="sheet-kicker"></div></div><div class="sheet-body"><div id="sheetQuick" class="quick-grid"></div><div id="sheetDescription" class="description-card"></div><div id="sheetTimes" class="all-times"></div><button type="button" id="closeSheet" class="sheet-close">Fermer</button></div></section></div>
-<div class="version-badge">V45.7.20 PWA</div>
+
+<div class="repair-link">
+  <a href="reparer-mobile.html">🔧 Réparer ou actualiser l’application</a>
+</div>
+
+<div class="version-badge">V49.0.21 PWA</div>
+
+
+
+
+
+
+
 
 
 
 
 
 <script>
-(async function synchroniserVersionMobile(){
+(async function synchroniserVersionMobile() {
   const badge = document.querySelector(".version-badge");
   try {
     const reponse = await fetch("./version.json?ts=" + Date.now(), { cache: "no-store" });
-    if (!reponse.ok) throw new Error("version.json indisponible");
+    if (!reponse.ok) return;
     const infos = await reponse.json();
     if (badge && infos.version) badge.textContent = infos.version + " PWA";
 
-    const cle = "dojo-version-chargee";
-    const precedente = localStorage.getItem(cle);
-    if (precedente && infos.version && precedente !== infos.version) {
+    const cle = "dojo-version-active";
+    const ancienne = localStorage.getItem(cle);
+    const rechargeCle = "dojo-recharge-" + infos.version;
+
+    if (
+      infos.version &&
+      ancienne &&
+      ancienne !== infos.version &&
+      !sessionStorage.getItem(rechargeCle)
+    ) {
       localStorage.setItem(cle, infos.version);
+      sessionStorage.setItem(rechargeCle, "1");
       if ("serviceWorker" in navigator) {
-        const inscriptions = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(inscriptions.map(inscription => inscription.update()));
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(reg => reg.update()));
       }
       location.reload();
       return;
@@ -46,9 +88,7 @@
 })();
 </script>
 
-
-
-<script src="mobile-data.js?v=45720"></script>
-<script src="app.js?v=45720"></script>
+<script src="mobile-data.js?v=49021"></script>
+<script src="app.js?v=49021"></script>
 </body>
 </html>

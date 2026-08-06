@@ -1,0 +1,29 @@
+V47.0 - SYSTÈME MOBILE DÉBOGUÉ
+
+Cause exacte identifiée :
+- le moteur de publication contenait encore une fonction de push récursive ;
+- le pull --rebase --autostash pouvait remettre d'anciens fichiers depuis GitHub ;
+- index.html, app.js, mobile-data.js, service-worker.js et version.json
+  étaient publiés avec des numéros différents ;
+- le contrôle en ligne vérifiait seulement que le site répondait.
+
+Corrections :
+- publish-server.js entièrement réécrit ;
+- sauvegarde de la version locale avant toute synchronisation GitHub ;
+- aucune récursion ;
+- mise à jour simultanée de tous les fichiers mobiles ;
+- validation de la version exacte via version.json ;
+- stratégie réseau prioritaire pour les fichiers variables ;
+- navigation Fitness, Arts martiaux, Retour et fiches stabilisée ;
+- installation PWA restaurée.
+
+Aucun cours, descriptif, coach ou réglage d'impression n'a été supprimé.
+
+INSTALLATION
+1. Fermer Dojo Manager.
+2. Remplacer le contenu du dossier FRONTEND par celui du ZIP.
+3. Conserver le dossier caché .git.
+4. Relancer DEMARRER-DOJO-MANAGER.bat.
+5. Cliquer sur Publier sur le mobile une seule fois.
+6. Attendre le message de publication.
+7. Fermer complètement le navigateur ou l'application mobile, puis rouvrir.

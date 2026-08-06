@@ -1,0 +1,21 @@
+V48.0 - CORRECTION DÉFINITIVE DU CHARGEMENT MOBILE
+
+Erreurs corrigées :
+- Unexpected token '<' dans app.js et service-worker.js ;
+- DONNEES already declared dans mobile-data.js ;
+- conflits Git et rebase bloqué ;
+- anciens fichiers réinjectés depuis GitHub ;
+- scripts chargés plusieurs fois ;
+- versions incohérentes entre les fichiers.
+
+Le dépôt local fonctionnel devient la référence lors de la prochaine publication.
+Le push utilise --force-with-lease, adapté à ce dépôt mono-utilisateur.
+
+INSTALLATION
+1. Fermer Dojo Manager.
+2. Remplacer le contenu du dossier FRONTEND par celui du ZIP.
+3. Conserver le dossier caché .git.
+4. Relancer DEMARRER-DOJO-MANAGER.bat.
+5. Publier une seule fois sur le mobile.
+6. Attendre la confirmation.
+7. Fermer complètement Chrome/Safari ou l'application, puis rouvrir.

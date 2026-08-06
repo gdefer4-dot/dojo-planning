@@ -1,0 +1,18 @@
+V45.5 - BOUTONS MOBILE CORRIGÉS
+
+Correction ciblée :
+- boutons Fitness et Arts martiaux réactivés ;
+- événements attachés après chargement complet du DOM ;
+- un seul chargement de mobile-data.js et app.js ;
+- nouveau cache V45.5.0 ;
+- cours restaurés, coachs, Instant Papote, Yogalates et Circuit Training ADO conservés ;
+- moteur de publication conservé.
+
+Installation :
+1. Fermer Dojo Manager.
+2. Copier le contenu du dossier FRONTEND du ZIP dans le dossier FRONTEND actuel.
+3. Accepter tous les remplacements.
+4. Ne pas supprimer le dossier caché .git.
+5. Relancer DEMARRER-DOJO-MANAGER.bat.
+6. Publier sur le mobile.
+7. Fermer complètement Safari et l'application installée, puis rouvrir.
