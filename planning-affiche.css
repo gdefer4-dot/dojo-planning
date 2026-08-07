@@ -8540,3 +8540,116 @@ line-height:1!important;
     overflow: auto !important;
   }
 }
+
+/* =========================================================
+   CORRECTION CIBLÉE - HORAIRES DE LA SALLE DE MUSCULATION
+   Lisibilité écran + aperçu impression uniquement.
+   Aucun autre bloc de l'affiche n'est modifié.
+   ========================================================= */
+.muscu-hours.footer-card{
+  overflow:hidden!important;
+}
+
+.muscu-hours.footer-card > .section-title{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1!important;
+}
+
+.muscu-hours .muscu-grid-v27-5{
+  grid-template-columns:1fr 1.18fr 1.42fr 1.18fr 1fr!important;
+  gap:.8mm!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-day > h4{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-single > .muscu-body{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-double > .muscu-body{
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) auto minmax(0,1fr)!important;
+  align-items:stretch!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-period{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-label{
+  font-size:6.1pt!important;
+  line-height:1.05!important;
+  text-align:center!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-period strong{
+  font-size:10.2pt!important;
+  line-height:1.05!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+
+@media print{
+  .muscu-hours.footer-card{
+    height:37mm!important;
+    min-height:37mm!important;
+  }
+
+  .muscu-hours.footer-card > .section-title{
+    flex:0 0 6.4mm!important;
+    height:6.4mm!important;
+    min-height:6.4mm!important;
+    font-size:9.2pt!important;
+    padding:1mm .8mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5{
+    grid-template-columns:1fr 1.18fr 1.42fr 1.18fr 1fr!important;
+    gap:.65mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-day > h4{
+    height:6.1mm!important;
+    min-height:6.1mm!important;
+    max-height:6.1mm!important;
+    padding:.35mm .25mm!important;
+    font-size:7.4pt!important;
+    line-height:1!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-day > .muscu-body{
+    top:6.1mm!important;
+    padding:.45mm .3mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-label{
+    font-size:5.7pt!important;
+    line-height:1!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-period strong{
+    font-size:9.5pt!important;
+    line-height:1!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-divider{
+    margin:.1mm auto!important;
+    padding:.1mm 0!important;
+  }
+}
+
