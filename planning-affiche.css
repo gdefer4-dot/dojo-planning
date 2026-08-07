@@ -8540,3 +8540,405 @@ line-height:1!important;
     overflow: auto !important;
   }
 }
+
+/* =========================================================
+   CORRECTION CIBLÉE - HORAIRES DE LA SALLE DE MUSCULATION
+   Lisibilité écran + aperçu impression uniquement.
+   Aucun autre bloc de l'affiche n'est modifié.
+   ========================================================= */
+.muscu-hours.footer-card{
+  overflow:hidden!important;
+}
+
+.muscu-hours.footer-card > .section-title{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1!important;
+}
+
+.muscu-hours .muscu-grid-v27-5{
+  grid-template-columns:1fr 1.18fr 1.42fr 1.18fr 1fr!important;
+  gap:.8mm!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-day > h4{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-single > .muscu-body{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-double > .muscu-body{
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) auto minmax(0,1fr)!important;
+  align-items:stretch!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-period{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-label{
+  font-size:6.1pt!important;
+  line-height:1.05!important;
+  text-align:center!important;
+}
+
+.muscu-hours .muscu-grid-v27-5 .muscu-period strong{
+  font-size:10.2pt!important;
+  line-height:1.05!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+
+@media print{
+  .muscu-hours.footer-card{
+    height:37mm!important;
+    min-height:37mm!important;
+  }
+
+  .muscu-hours.footer-card > .section-title{
+    flex:0 0 6.4mm!important;
+    height:6.4mm!important;
+    min-height:6.4mm!important;
+    font-size:9.2pt!important;
+    padding:1mm .8mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5{
+    grid-template-columns:1fr 1.18fr 1.42fr 1.18fr 1fr!important;
+    gap:.65mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-day > h4{
+    height:6.1mm!important;
+    min-height:6.1mm!important;
+    max-height:6.1mm!important;
+    padding:.35mm .25mm!important;
+    font-size:7.4pt!important;
+    line-height:1!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-day > .muscu-body{
+    top:6.1mm!important;
+    padding:.45mm .3mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-label{
+    font-size:5.7pt!important;
+    line-height:1!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-period strong{
+    font-size:9.5pt!important;
+    line-height:1!important;
+  }
+
+  .muscu-hours .muscu-grid-v27-5 .muscu-divider{
+    margin:.1mm auto!important;
+    padding:.1mm 0!important;
+  }
+}
+
+/* =========================================================
+   V50.0 - HORAIRES MUSCULATION
+   Bloc reconstruit en 5 colonnes réelles.
+   ========================================================= */
+.muscu-hours.footer-card{
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+
+.muscu-hours .muscu-grid-v50{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:.92fr 1.15fr 1.42fr 1.15fr .92fr!important;
+  gap:4px!important;
+  padding:4px!important;
+  align-items:stretch!important;
+}
+
+.muscu-hours .muscu-grid-v50 .muscu-day{
+  min-width:0!important;
+  height:100%!important;
+  padding:0!important;
+  border:1px solid #86aee0!important;
+  border-radius:6px!important;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-rows:25px minmax(0,1fr)!important;
+  background:rgba(255,255,255,.34)!important;
+}
+
+.muscu-hours .muscu-grid-v50 .muscu-day h4{
+  margin:0!important;
+  padding:3px 2px!important;
+  min-height:0!important;
+  height:auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  color:#fff!important;
+  background:#0f4d8a!important;
+  font-size:11px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  white-space:normal!important;
+}
+
+.muscu-hours .muscu-grid-v50 .muscu-body{
+  min-height:0!important;
+  padding:3px 2px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  gap:2px!important;
+}
+
+.muscu-hours .muscu-grid-v50 .muscu-body strong{
+  margin:0!important;
+  padding:0!important;
+  font-size:15px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  color:#0f172a!important;
+  white-space:nowrap!important;
+}
+
+.muscu-hours .muscu-grid-v50 .muscu-body span{
+  margin:0!important;
+  padding:0!important;
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  color:#0f4d8a!important;
+}
+
+@media print{
+  .muscu-hours.footer-card{
+    height:35mm!important;
+    min-height:35mm!important;
+  }
+
+  .muscu-hours.footer-card > .section-title{
+    flex:0 0 5.8mm!important;
+    height:5.8mm!important;
+    min-height:5.8mm!important;
+    padding:.6mm!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:8.6pt!important;
+    line-height:1!important;
+  }
+
+  .muscu-hours .muscu-grid-v50{
+    height:calc(100% - 5.8mm)!important;
+    grid-template-columns:.92fr 1.15fr 1.42fr 1.15fr .92fr!important;
+    gap:.7mm!important;
+    padding:.7mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v50 .muscu-day{
+    grid-template-rows:6mm minmax(0,1fr)!important;
+    border-radius:1mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v50 .muscu-day h4{
+    padding:.5mm .3mm!important;
+    font-size:6.8pt!important;
+    line-height:.95!important;
+  }
+
+  .muscu-hours .muscu-grid-v50 .muscu-body{
+    padding:.45mm .25mm!important;
+    gap:.3mm!important;
+  }
+
+  .muscu-hours .muscu-grid-v50 .muscu-body strong{
+    font-size:8.8pt!important;
+    line-height:1!important;
+  }
+
+  .muscu-hours .muscu-grid-v50 .muscu-body span{
+    font-size:6pt!important;
+  }
+}
+
+/* =========================================================
+   V51.0 - CORRECTION GÉOMÉTRIQUE MUSCULATION + QR
+   ========================================================= */
+@media print {
+
+  /* Le cadre musculation retrouve exactement la hauteur de ses voisins. */
+  .footer-grid > .muscu-hours.footer-card{
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    align-self:stretch!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* 5 cases. Chaque case possède UNE vraie colonne interne de 100 %. */
+  .muscu-hours .muscu-grid-v50{
+    width:100%!important;
+    flex:1 1 auto!important;
+    min-height:0!important;
+    display:grid!important;
+    grid-template-columns:.92fr 1.18fr 1.48fr 1.12fr .92fr!important;
+    gap:.65mm!important;
+    padding:.55mm!important;
+    box-sizing:border-box!important;
+    align-items:stretch!important;
+  }
+
+  .muscu-hours .muscu-grid-v50 .muscu-day{
+    width:100%!important;
+    height:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:7mm minmax(0,1fr)!important;
+    justify-items:stretch!important;
+    align-items:stretch!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+  }
+
+  /* Bandeau bleu = largeur intérieure TOTALE de la case. */
+  .muscu-hours .muscu-grid-v50 .muscu-day > h4{
+    position:static!important;
+    grid-column:1 / -1!important;
+    justify-self:stretch!important;
+    align-self:stretch!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:7mm!important;
+    min-height:7mm!important;
+    max-height:7mm!important;
+    margin:0!important;
+    padding:.45mm .15mm!important;
+    box-sizing:border-box!important;
+    border:0!important;
+    border-radius:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    background:#0f4d8a!important;
+    color:#fff!important;
+    text-align:center!important;
+    font-size:7.4pt!important;
+    line-height:.95!important;
+    font-weight:950!important;
+    white-space:normal!important;
+  }
+
+  /* Le cadre Retrouvez-nous ne reçoit aucun padding parasite hérité. */
+  .footer-grid > .qr-section.footer-card{
+    padding:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .qr-section .qr-grid{
+    width:100%!important;
+    flex:1 1 auto!important;
+    min-height:0!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:.8mm!important;
+    padding:.6mm!important;
+    box-sizing:border-box!important;
+    align-items:stretch!important;
+  }
+
+  /* Une seule colonne interne 1fr dans CHAQUE carte.
+     Cela supprime le décalage créé par la largeur du texte Facebook/Instagram. */
+  .qr-section .qr-card,
+  .qr-section .qr-card.facebook,
+  .qr-section .qr-card.instagram,
+  .qr-section .qr-card.planning{
+    position:static!important;
+    inset:auto!important;
+    left:auto!important;
+    right:auto!important;
+    transform:none!important;
+    translate:none!important;
+    width:100%!important;
+    height:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:.55mm!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:4.6mm minmax(0,1fr) 5.5mm!important;
+    justify-items:stretch!important;
+    align-items:center!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+  }
+
+  .qr-section .qr-card > h3,
+  .qr-section .qr-card > p{
+    position:static!important;
+    left:auto!important;
+    right:auto!important;
+    transform:none!important;
+    translate:none!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    justify-self:stretch!important;
+    text-align:center!important;
+    box-sizing:border-box!important;
+  }
+
+  .qr-section .qr-card > img,
+  .qr-section .qr-card.facebook > img,
+  .qr-section .qr-card.instagram > img,
+  .qr-section .qr-card.planning > img{
+    position:static!important;
+    left:auto!important;
+    right:auto!important;
+    transform:none!important;
+    translate:none!important;
+    display:block!important;
+    width:13.5mm!important;
+    height:13.5mm!important;
+    min-width:13.5mm!important;
+    min-height:13.5mm!important;
+    max-width:13.5mm!important;
+    max-height:13.5mm!important;
+    margin:0!important;
+    padding:0!important;
+    justify-self:center!important;
+    align-self:center!important;
+    object-fit:contain!important;
+  }
+}
+
