@@ -1,5 +1,5 @@
 'use strict';
-const APP_VERSION='V49.0.27';
+const APP_VERSION='V49.0.28';
 const JOURS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let typeActif='fitness';
 function echapper(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
