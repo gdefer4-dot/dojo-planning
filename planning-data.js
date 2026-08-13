@@ -70,7 +70,7 @@ const MARTIAL_SALLES = [
 const MARTIAL_ACTIVITES = [
   { nom: "PPG Arts Martiaux + de 12 ans", duree: 60, intensite: 4, couleur: "#c9a7ff", couleurTexte: "#24123d" },
 
-  { nom: "JUDO 6/12 ans", duree: 60, intensite: 3, couleur: "#a8dcff", couleurTexte: "#08233f" },
+  { nom: "JUDO 9/12 ans", duree: 60, intensite: 3, couleur: "#a8dcff", couleurTexte: "#08233f" },
   { nom: "JUDO + 12 ans", duree: 90, intensite: 4, couleur: "#74c4f2", couleurTexte: "#06223a" },
   { nom: "Judo 6/8 ans", duree: 60, intensite: 2, couleur: "#bde7ff", couleurTexte: "#08233f" },
   { nom: "Judo Kata Technique", duree: 60, intensite: 2, couleur: "#8fd1f5", couleurTexte: "#08233f" },
@@ -94,7 +94,7 @@ const MARTIAL_PLANNING_DEFAUT = [
   { jour: "Lundi", debut: "19:30", fin: "20:45", activite: "PPG Arts Martiaux + de 12 ans", intensite: 4, salle: "Grand Dojo" },
   { jour: "Lundi", debut: "18:15", fin: "19:30", activite: "Karaté technique", intensite: 2, salle: "Grand Dojo" },
   { jour: "Mardi", debut: "18:15", fin: "19:30", activite: "Full Contact", intensite: 2, salle: "Salle Kerkhove" },
-  { jour: "Mardi", debut: "18:00", fin: "19:15", activite: "JUDO 6/12 ans", intensite: 2, salle: "Grand Dojo" },
+  { jour: "Mardi", debut: "18:00", fin: "19:15", activite: "JUDO 9/12 ans", intensite: 2, salle: "Grand Dojo" },
   { jour: "Mardi", debut: "19:15", fin: "20:45", activite: "JUDO + 12 ans", intensite: 4, salle: "Grand Dojo" },
   { jour: "Mercredi", debut: "09:15", fin: "10:00", activite: "Éveil Kids 3/4 ans", intensite: 1, salle: "Grand Dojo" },
   { jour: "Mercredi", debut: "10:00", fin: "10:45", activite: "Éveil Kids 15/36 mois", intensite: 1, salle: "Grand Dojo" },
@@ -105,7 +105,7 @@ const MARTIAL_PLANNING_DEFAUT = [
   { jour: "Mercredi", debut: "18:15", fin: "19:30", activite: "Karaté", intensite: 3, salle: "Grand Dojo" },
   { jour: "Jeudi", debut: "18:15", fin: "19:30", activite: "Full Contact", intensite: 4, salle: "Grand Dojo" },
   { jour: "Jeudi", debut: "19:30", fin: "20:45", activite: "Judo Kata Technique", intensite: 2, salle: "Grand Dojo" },
-  { jour: "Vendredi", debut: "18:00", fin: "19:15", activite: "JUDO 6/12 ans", intensite: 3, salle: "Grand Dojo" },
+  { jour: "Vendredi", debut: "18:00", fin: "19:15", activite: "JUDO 9/12 ans", intensite: 3, salle: "Grand Dojo" },
   { jour: "Vendredi", debut: "19:15", fin: "20:45", activite: "JUDO + 12 ans", intensite: 4, salle: "Grand Dojo" },
   { jour: "Samedi", debut: "09:15", fin: "10:00", activite: "Éveil Kids 3/4 ans", intensite: 1, salle: "Grand Dojo" },
   { jour: "Samedi", debut: "10:00", fin: "10:45", activite: "Éveil Kids 15/36 mois", intensite: 1, salle: "Grand Dojo" },

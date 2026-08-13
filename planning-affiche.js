@@ -107,6 +107,34 @@ function normaliserCoursPourPlanningActif() {
 })();
 
 
+
+/* Correction ciblée Judo 9/12 ans.
+   Corrige uniquement les deux créneaux existants du mardi et du vendredi. */
+(function corrigerJudo9_12(){
+  const cleMigration = "dojo-migration-judo-9-12-v1";
+  if (localStorage.getItem(cleMigration)) return;
+
+  if (planningActif === "martial") {
+    let modifie = false;
+    cours = cours.map(c => {
+      const bonCreneau =
+        (c.jour === "Mardi" || c.jour === "Vendredi") &&
+        c.debut === "18:00" &&
+        c.fin === "19:15" &&
+        c.activite === "JUDO 6/12 ans";
+
+      if (!bonCreneau) return c;
+      modifie = true;
+      return { ...c, activite: "JUDO 9/12 ans" };
+    });
+
+    if (modifie) localStorage.setItem(STORAGE_KEY, JSON.stringify(cours));
+  }
+
+  localStorage.setItem(cleMigration, "1");
+})();
+
+
 /* V45.4 : restauration des cours supprimés par l'ancien normaliseur. */
 (function restaurerCoursV454() {
   const cle = "dojo-restauration-cours-v454";
