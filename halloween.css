@@ -1,0 +1,24 @@
+/* Décoration d'octobre : couleurs des activités conservées. */
+html.halloween,.halloween body{background:#21132f}
+.halloween .home{background:radial-gradient(ellipse at 15% 0,#673674,transparent 65%),radial-gradient(ellipse at 95% 35%,#713819,transparent 60%),#21132f}
+.halloween .home-card{border:1px solid #e9b679}
+.halloween .home-top{position:relative;isolation:isolate;background:linear-gradient(145deg,#fff1de,#f4eafa)}
+.halloween .home-top::before{content:'';position:absolute;right:0;top:0;width:76px;height:76px;pointer-events:none;opacity:.25;z-index:-1;background:repeating-radial-gradient(circle at 100% 0,transparent 0 17px,#623c77 18px 19px,transparent 20px 25px),linear-gradient(135deg,transparent 49%,#623c77 50%,transparent 51%)}
+.halloween .home-top::after{content:'🎃 Halloween s’invite au Dojo';display:block;margin:18px auto 0;width:fit-content;max-width:100%;padding:10px 15px;border-radius:999px;background:#392044;color:#fff0da;font-size:15px;font-weight:800;line-height:1.4}
+.halloween .home-logo,.halloween .brand-logo{border-color:#db862b}
+.halloween .home-card h1{color:#392044}.halloween .home-card p{color:#6b4775}
+.halloween .choices{background:#fffaf4}
+.halloween .choice-fitness{background:linear-gradient(135deg,#a64908,#7e3308)}
+.halloween .choice-martial{background:linear-gradient(135deg,#784098,#4e236b)}
+.halloween .view{background:#f1eaf5}
+.halloween .toolbar{background:#21132ff5;border-bottom:2px solid #df913f}
+.halloween .toolbar button{color:#613178;background:#fff5e9}
+.halloween .mobile-header{background:linear-gradient(115deg,#392044,#633d79);border-color:#fff3e2}
+.halloween .mobile-header::after{background:linear-gradient(90deg,#ef9c42,#ae83ce,#ef9c42)}
+.halloween .mobile-header::before{content:'🎃 Octobre au Dojo';display:block;color:#ffe2b6;font-size:14px;font-weight:800;margin-bottom:14px}
+.halloween .brand-title h2{color:#ffe2b6}.halloween .season{background:#8d3f0c}
+.halloween .day h3{background:linear-gradient(110deg,#392044,#633d79)}
+.halloween .muscu-hours{border-top-color:#c06b18}
+.halloween .version-badge{background:#392044;border-color:#e9b679}
+.halloween .repair-link a{background:#fff3e2;color:#392044}
+.halloween button:focus-visible,.halloween a:focus-visible{outline:3px solid #b96b17;outline-offset:3px}
